@@ -128,6 +128,35 @@ Controls pumps, valves, sprinklers, faucets, servo valves and thermostatic valve
 
 Each writable item has a `...Feedback` item with the state confirmed by the device. When enabled on the actuator in the app, every type also emits `volumeValue` / `volumeRelative` (l) with `volumeRelativeTimestamp`, `openStatus` and `faultSignal`.
 
+### automation
+
+Controls shutters, sun blinds, awnings, curtains, gates, pedestrian gates, barriers, tilting doors, front doors and windows, and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: "open"` / `"close"` / `"stop"` (or `true` / `false`) | drive the automation |
+| `payload: "lock"` / `"unlock"` | lock or unlock a front door with a smart lock |
+| `topic: "absolutePosition"`, `payload: 40` | move to a position (0-100 %) |
+| `topic: "absolutePositionFoil"`, `payload: 30` | tilt the slats (0-100 %) |
+| `payload: { "absolutePosition": 40 }` | write one or more items at once |
+
+The commands follow the features enabled on the automation in the app:
+
+| Command | Available on |
+|---|---|
+| drive `open` | all |
+| drive `close` | shutter, sunBlind, sunshadeAwning, curtain; the other types when *closeable* |
+| drive `stop` | when *stoppable* |
+| drive `lock` / `unlock` | frontDoor when *lockable* |
+| absolutePosition | when *positionable* |
+| absolutePositionFoil | when *inclinable* |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`. `driveFeedback` is one of `open`, `opening`, `close`, `closing`, `stop`, `idle`, `locked`, `locking`, `unlocked`, `unlocking`, `block`, `alarm`; positions come as `absolutePositionFeedback` / `absolutePositionFoilFeedback`. When enabled in the app the node also emits `openStatus` and `faultSignal`, and a lockable front door emits `status` (`online` / `offline`) and `battery` (%).
+
+Commands sent from Node-RED do not ask for the PIN, even when the automation is secured in the app.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

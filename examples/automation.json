@@ -1,0 +1,95 @@
+[
+    {
+        "id": "a7e0b0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the automation node and select your shutter, gate, door or window",
+        "info": "Inject nodes open, close and stop the automation; the debug node shows the state reported by the headunit. \"stop\" needs the stoppable feature, \"close\" on gates and doors needs the closeable feature and the position needs the positionable feature.",
+        "x": 300,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a7e0b0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "open",
+        "props": [{ "p": "payload" }],
+        "payload": "open",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [["a7e0b0000000006"]]
+    },
+    {
+        "id": "a7e0b0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "close",
+        "props": [{ "p": "payload" }],
+        "payload": "close",
+        "payloadType": "str",
+        "x": 130,
+        "y": 160,
+        "wires": [["a7e0b0000000006"]]
+    },
+    {
+        "id": "a7e0b0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "stop",
+        "props": [{ "p": "payload" }],
+        "payload": "stop",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["a7e0b0000000006"]]
+    },
+    {
+        "id": "a7e0b0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "position 40% (positionable)",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "absolutePosition",
+        "payload": "40",
+        "payloadType": "num",
+        "x": 170,
+        "y": 240,
+        "wires": [["a7e0b0000000006"]]
+    },
+    {
+        "id": "a7e0b0000000006",
+        "type": "lilitech-automation",
+        "z": "",
+        "name": "",
+        "headunit": "a7e0b0000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 430,
+        "y": 180,
+        "wires": [["a7e0b0000000007"]]
+    },
+    {
+        "id": "a7e0b0000000007",
+        "type": "debug",
+        "z": "",
+        "name": "automation state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 640,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a7e0b0000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

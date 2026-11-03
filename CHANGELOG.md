@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+- New `automation` node: opens, closes and stops shutters, sun blinds, awnings, curtains, gates, barriers, doors and windows, locks/unlocks front doors with a smart lock and sets the position (`absolutePosition`) and the slats (`absolutePositionFoil`), following the features enabled in the app.
+- Emits `driveFeedback`, the position feedbacks, `openStatus` and `faultSignal` (when enabled) and the smart lock `status` / `battery`, with `msg.unit`.
+- Requires a headunit that answers the device list request for `automations`.
+
 ## 0.5.0
 
 - New `actuator` node: switches pumps, valves, sprinklers and faucets (with `proportionalDrive` on proportional actuators), drives servo valves (`open` / `close` / `stop`) and sets the setpoint of thermostatic valves.

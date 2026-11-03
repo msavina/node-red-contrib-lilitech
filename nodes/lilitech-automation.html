@@ -1,0 +1,150 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-automation', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-align-justify',
+        paletteLabel: 'automation',
+        label: function () {
+            return this.name || this.deviceName || 'automation';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'automations');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-automation">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-align-justify"></i> Automation</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload automations"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Commands</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="feedback">Feedback only (actual state)</option>
+            <option value="all">Feedback and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-automation">
+    <p>Controls a Lilitech automation (shutter, sun blind, awning, curtain, gate, pedestrian gate, barrier, tilting door, front door or window) and emits its state changes.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean | string | number | object</span></dt>
+        <dd>
+            <ul>
+                <li><code>"open"</code>, <code>"close"</code>, <code>"stop"</code> (<code>true</code> opens, <code>false</code> closes).</li>
+                <li>front door with a smart lock: also <code>"lock"</code> and <code>"unlock"</code>.</li>
+                <li>An object with one or more items, e.g. <code>{"absolutePosition": 40}</code>.</li>
+                <li>A single value together with <code>msg.topic</code> set to the item name.</li>
+            </ul>
+        </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd>Item to write when the payload is a single value, e.g. <code>absolutePosition</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>driveFeedback</code>.</dd>
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Item value.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure, e.g. <code>%</code>.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <p>The available commands depend on the automation type and on the features enabled in the app. Each writable item has a <code>...Feedback</code> item with the actual state.</p>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Available on</th>
+        </tr>
+        <tr>
+            <td>drive: <code>open</code></td>
+            <td>all</td>
+        </tr>
+        <tr>
+            <td>drive: <code>close</code></td>
+            <td>shutter, sunBlind, sunshadeAwning, curtain; the other types when <i>closeable</i></td>
+        </tr>
+        <tr>
+            <td>drive: <code>stop</code></td>
+            <td>when <i>stoppable</i></td>
+        </tr>
+        <tr>
+            <td>drive: <code>lock</code>, <code>unlock</code></td>
+            <td>frontDoor when <i>lockable</i></td>
+        </tr>
+        <tr>
+            <td>absolutePosition (0-100 %)</td>
+            <td>when <i>positionable</i></td>
+        </tr>
+        <tr>
+            <td>absolutePositionFoil (slats, 0-100 %)</td>
+            <td>when <i>inclinable</i></td>
+        </tr>
+    </table>
+    <p>
+        driveFeedback: <code>open</code>, <code>opening</code>, <code>close</code>, <code>closing</code>, <code>stop</code>, <code>idle</code>,
+        <code>locked</code>, <code>locking</code>, <code>unlocked</code>, <code>unlocking</code>, <code>block</code>, <code>alarm</code>.
+    </p>
+    <p>
+        When enabled on the automation in the app, the node also emits <code>openStatus</code> and <code>faultSignal</code>; a lockable front
+        door emits the <code>status</code> (<code>online</code> / <code>offline</code>) and the <code>battery</code> (%) of the smart lock.
+    </p>
+
+    <h3>Details</h3>
+    <p>
+        With <i>Feedback only</i> the node emits the state confirmed by the field device. With <i>Feedback and commands</i> it also emits the
+        commands sent by the app or by other nodes, before the device confirms them.
+    </p>
+    <p>Commands sent from Node-RED do not ask for the PIN, even when the automation is secured in the app.</p>
+</script>
