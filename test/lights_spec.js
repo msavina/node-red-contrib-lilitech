@@ -18,6 +18,7 @@ describe('lights family', function () {
 
     it('writes the item named by the topic and clamps percentages', function () {
         assert.deepStrictEqual(lights.parseInput({ topic: 'brightness', payload: 150 }, dimmer, {}), { brightness: 100 });
+        assert.deepStrictEqual(lights.parseInput({ topic: 'brightness ', payload: 50 }, dimmer, {}), { brightness: 50 });
     });
 
     it('rejects items not supported by the light type', function () {
@@ -31,6 +32,15 @@ describe('lights family', function () {
         assert.deepStrictEqual(lights.outputValue('colorFeedback', items.color), { r: 255, g: 128, b: 0 });
     });
 
+    it('accepts the common color formats', function () {
+        const red = '{"r":255,"g":0,"b":0}';
+        for (const color of [{ r: 255, g: 0, b: 0 }, '#ff0000', red, '{r:255, g:0,b:0}', '255,0,0', 'rgb(255, 0, 0)']) {
+            assert.deepStrictEqual(lights.parseInput({ topic: 'color', payload: color }, rgb, {}), { color: red });
+        }
+        assert.throws(() => lights.parseInput({ topic: 'color', payload: 'red' }, rgb, {}), /Invalid color/);
+        assert.throws(() => lights.parseInput({ topic: 'color', payload: '{r:255}' }, rgb, {}), /Invalid color/);
+    });
+
     it('accepts scenes only when enabled', function () {
         assert.deepStrictEqual(lights.parseInput({ topic: 'scene', payload: 3 }, { typeId: 'dimmer', scenesAvailable: true }, {}), { scene: 3 });
     });
@@ -38,5 +48,11 @@ describe('lights family', function () {
     it('rejects invalid values', function () {
         assert.throws(() => lights.parseInput({ payload: 'maybe' }, dimmer, {}), /Invalid boolean/);
         assert.throws(() => lights.parseInput({ topic: 'brightness', payload: 'abc' }, dimmer, {}), /Invalid number/);
+    });
+
+    it('points out an unknown topic', function () {
+        assert.throws(() => lights.parseInput({ topic: 'brigthness', payload: 50 }, dimmer, {}), /msg.topic "brigthness" is not a known item/);
+        // Un topic qualsiasi con un payload booleano resta un comando switch
+        assert.deepStrictEqual(lights.parseInput({ topic: 'kitchen', payload: true }, dimmer, {}), { switch: true });
     });
 });

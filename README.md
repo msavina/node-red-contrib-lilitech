@@ -38,7 +38,7 @@ Select the headunit and the light: the list is loaded from the headunit, and the
 | `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch the light |
 | `payload: { "switch": true, "brightness": 80 }` | write several items at once |
 | `topic: "brightness"`, `payload: 50` | write a single item |
-| `payload: { "color": { "r": 255, "g": 0, "b": 0 } }` or `"#ff0000"` | set the color |
+| `payload: { "color": { "r": 255, "g": 0, "b": 0 } }`, or `topic: "color"` with `"#ff0000"`, `"255,0,0"` or `"{r:255,g:0,b:0}"` | set the color |
 
 **Output**: one message per changed item, with `msg.topic` = item name (e.g. `switchFeedback`), `msg.payload` = value, `msg.origin` and `msg.device`.
 
