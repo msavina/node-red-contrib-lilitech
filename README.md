@@ -74,6 +74,32 @@ Options:
 - **Send min/max statistics**: numeric sensors also emit `...MinValue`, `...MaxValue`, `...MinTimestamp`, `...MaxTimestamp` (e.g. `temperatureMaxValue`).
 - **Send diagnostics** (default on): `sensorLoss`, `lowBattery`, `faultSignal`, when the feature is enabled on the sensor.
 
+### security area
+
+Arms and disarms a security area and emits its state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: "arm"` / `true` / `"on"` | arm the area (with the exit time, if delayed arming is enabled) |
+| `payload: "disarm"` / `false` / `"off"` | disarm the area |
+| `payload: "patrol"` | start the patrol (internal logic areas with patrol enabled, area armed) |
+| `payload: { "areaControl": "arm" }` | same as above |
+
+> Commands sent from Node-RED do not ask for the PIN, even when the area requires it in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`.
+
+| Item | Value |
+|---|---|
+| areaStatus | `disarmed`, `unready`, `forceable`, `exiting`, `armed`, `forced`, `patrol`, `entering`, `alarm`, `tamper` |
+| memory | `true` when the area went in alarm since it was last armed |
+| history | names of the sensors that triggered the last alarm |
+| areaControl | last command (`arm`, `disarm`, `patrol`...) sent by the app, by other nodes or by the headunit |
+
+The **Output** option controls `areaControl`: not emitted with **Area state only** (default), emitted with **Area state and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

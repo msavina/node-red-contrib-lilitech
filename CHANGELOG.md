@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.3.4
+
+- security area: the default output is "Area state only" (like the light node); `areaControl` is emitted only with "Area state and commands".
+
+## 0.3.3
+
+- security area: the "Output" option is back to control `areaControl`: emitted with "Area state and commands" (default), not emitted with "Area state only".
+
+## 0.3.2
+
+- security area: `areaControl` is always emitted; the "Output" option has been removed.
+
+## 0.3.1
+
+- security area: the exit/entry/alarm/patrol timers (`timerExitAt`, `timerEnterAt`, `timerAlarmAt`, `timerPatrolAt`) are no longer emitted.
+
+## 0.3.0
+
+- New `security area` node: arms, disarms and starts the patrol of a security area (`"arm"`, `"disarm"`, `"patrol"`, or `true`/`false`) and emits `areaStatus`, `memory` and `history`.
+- Commands sent from Node-RED do not ask for the area PIN.
+- Requires a headunit that answers the device list request for `security-areas`.
+
 ## 0.2.7
 
 - light and common node status labels are capitalized (e.g. `On · 80%`, `Off`, `Disconnected`, `Device Not Found`).

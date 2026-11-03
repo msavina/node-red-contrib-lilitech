@@ -1,0 +1,132 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-security-area', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'state' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-shield',
+        paletteLabel: 'security area',
+        label: function () {
+            return this.name || this.deviceName || 'security area';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'security-areas');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-security-area">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-shield"></i> Area</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload areas"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Commands</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="state">Area state only</option>
+            <option value="all">Area state and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-security-area">
+    <p>Arms, disarms or starts the patrol of a Lilitech security area and emits its state changes.</p>
+    <p>
+        <b>Warning:</b> commands sent by this node do not ask for the PIN, even when the area requires it in the app. Anyone who can edit
+        the flows can disarm the area.
+    </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | boolean | object</span></dt>
+        <dd>
+            <ul>
+                <li><code>"arm"</code>, <code>"disarm"</code> or <code>"patrol"</code>.</li>
+                <li><code>true</code> / <code>"on"</code> arms, <code>false</code> / <code>"off"</code> disarms.</li>
+                <li>An object <code>{"areaControl": "arm"}</code>.</li>
+            </ul>
+        </dd>
+    </dl>
+    <p>
+        <code>patrol</code> is available only on areas with internal logic and patrol enabled, and only when the area is armed. Arming an area
+        that is not ready is ignored by the headunit.
+    </p>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>areaStatus</code>.</dd>
+        <dt>payload <span class="property-type">string | boolean | number | array</span></dt>
+        <dd>Item value.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>areaStatus</td>
+            <td>
+                <code>disarmed</code>, <code>unready</code>, <code>forceable</code>, <code>exiting</code>, <code>armed</code>,
+                <code>forced</code>, <code>patrol</code>, <code>entering</code>, <code>alarm</code>, <code>tamper</code>
+            </td>
+        </tr>
+        <tr>
+            <td>memory</td>
+            <td><code>true</code> when the area went in alarm since it was last armed</td>
+        </tr>
+        <tr>
+            <td>history</td>
+            <td>names of the sensors that triggered the last alarm</td>
+        </tr>
+        <tr>
+            <td>areaControl</td>
+            <td>last command (<code>arm</code>, <code>disarm</code>, <code>patrol</code>...) sent by the app, by other nodes or by the headunit; only with <i>Area state and commands</i></td>
+        </tr>
+    </table>
+</script>
