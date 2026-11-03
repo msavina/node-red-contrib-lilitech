@@ -1,0 +1,40 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-headunit', {
+        category: 'config',
+        defaults: {
+            name: { value: '' },
+            url: { value: 'http://127.0.0.1:3000', required: true, validate: RED.validators.regex(/^https?:\/\/.+/i) }
+        },
+        label: function () {
+            return this.name || this.url;
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-headunit">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-url"><i class="fa fa-plug"></i> Tube URL</label>
+        <input type="text" id="node-config-input-url" placeholder="http://127.0.0.1:3000" />
+    </div>
+    <div class="form-tips">
+        The tube accepts connections only from the headunit itself: keep the default URL when Node-RED runs on the headunit.
+    </div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-headunit">
+    <p>Connection to the internal websocket ("tube") of a Lilitech headunit.</p>
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Tube URL <span class="property-type">string</span></dt>
+        <dd>
+            Address of the headunit tube. Default <code>http://127.0.0.1:3000</code>. The headunit only accepts connections from
+            the local machine, so Node-RED must run on the headunit.
+        </dd>
+    </dl>
+    <h3>Details</h3>
+    <p>A single connection is shared by all the Lilitech device nodes that use this configuration. It reconnects automatically.</p>
+</script>

@@ -1,0 +1,53 @@
+{
+    "name": "node-red-contrib-lilitech",
+    "version": "0.1.0",
+    "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
+    "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
+    "license": "MIT",
+    "homepage": "https://www.lilitech.com",
+    "keywords": [
+        "node-red",
+        "lilitech",
+        "smart home",
+        "home automation",
+        "domotica",
+        "light"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/msavina/node-red-contrib-lilitech.git"
+    },
+    "bugs": {
+        "url": "https://github.com/msavina/node-red-contrib-lilitech/issues"
+    },
+    "files": [
+        "nodes",
+        "lib",
+        "examples",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md"
+    ],
+    "node-red": {
+        "version": ">=3.0.0",
+        "nodes": {
+            "lilitech-headunit": "nodes/lilitech-headunit.js",
+            "lilitech-light": "nodes/lilitech-light.js"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/**/*_spec.js\" --exit"
+    },
+    "dependencies": {
+        "socket.io-client": "^4.8.1"
+    },
+    "devDependencies": {
+        "mocha": "^11.7.1",
+        "node-red": "^4.1.0",
+        "node-red-node-test-helper": "^0.3.4",
+        "socket.io": "^4.8.1"
+    }
+}

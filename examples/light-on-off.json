@@ -1,0 +1,95 @@
+[
+    {
+        "id": "a1c0de000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the light node and select your light",
+        "info": "Inject nodes switch the light; the debug node shows the state reported by the headunit.",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a1c0de000000002",
+        "type": "inject",
+        "z": "",
+        "name": "on",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [["a1c0de000000006"]]
+    },
+    {
+        "id": "a1c0de000000003",
+        "type": "inject",
+        "z": "",
+        "name": "off",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 160,
+        "wires": [["a1c0de000000006"]]
+    },
+    {
+        "id": "a1c0de000000004",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["a1c0de000000006"]]
+    },
+    {
+        "id": "a1c0de000000005",
+        "type": "inject",
+        "z": "",
+        "name": "brightness 50%",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "brightness",
+        "payload": "50",
+        "payloadType": "num",
+        "x": 160,
+        "y": 240,
+        "wires": [["a1c0de000000006"]]
+    },
+    {
+        "id": "a1c0de000000006",
+        "type": "lilitech-light",
+        "z": "",
+        "name": "",
+        "headunit": "a1c0de000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 380,
+        "y": 180,
+        "wires": [["a1c0de000000007"]]
+    },
+    {
+        "id": "a1c0de000000007",
+        "type": "debug",
+        "z": "",
+        "name": "light state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 570,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a1c0de000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
