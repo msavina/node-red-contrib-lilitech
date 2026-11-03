@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1
+
+- electronic: the item is `isOnline` (boolean, `true` = online), the same used by the Lilitech app, instead of `status`.
+
+## 0.4.0
+
+- New `electronic` node (read only): emits the `online` / `offline` status of smartphones, laptops, tablets, watches, printers and scanners.
+- Requires a headunit that answers the device list request for `electronics`.
+
 ## 0.3.4
 
 - security area: the default output is "Area state only" (like the light node); `areaControl` is emitted only with "Area state and commands".

@@ -100,6 +100,10 @@ Arms and disarms a security area and emits its state.
 
 The **Output** option controls `areaControl`: not emitted with **Area state only** (default), emitted with **Area state and commands**.
 
+### electronic
+
+Read only: emits the status of an electronic device (smartphone, laptop, tablet, watch, printer, scanner...) every time it changes, with `msg.topic` = `isOnline` and `msg.payload` = `true` (online) or `false` (offline).
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License
