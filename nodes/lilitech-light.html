@@ -1,109 +1,34 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
 <script type="text/javascript">
-    (function () {
-        const TYPE_ITEMS = {
-            onOff: ['switch'],
-            dimmer: ['switch', 'brightness'],
-            tunableWhite: ['switch', 'brightness', 'temperature'],
-            rgb: ['switch', 'color', 'brightnessColor'],
-            rgbWhite: ['switch', 'brightness', 'color', 'brightnessColor'],
-            rgbTunableWhite: ['switch', 'brightness', 'temperature', 'color', 'brightnessColor']
-        };
-
-        /*--------------------------------------------------------------------------------------------------------------
-        --------------------------------------------------------------------------------------------------------------*/
-        function showItems(typeId, scenesAvailable) {
-            const items = (TYPE_ITEMS[typeId] || []).slice();
-            if (scenesAvailable) items.push('scene');
-            $('#node-input-lilitech-items').text(items.length ? items.join(', ') : '-');
+    RED.nodes.registerType('lilitech-light', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-lightbulb-o',
+        paletteLabel: 'light',
+        label: function () {
+            return this.name || this.deviceName || 'light';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'lights');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
         }
-
-        /*--------------------------------------------------------------------------------------------------------------
-            Carica l'elenco delle lights dalla headunit selezionata
-        --------------------------------------------------------------------------------------------------------------*/
-        function loadDevices(node) {
-            const select = $('#node-input-deviceId');
-            const headunitId = $('#node-input-headunit').val();
-            const headunit = RED.nodes.node(headunitId);
-            const current = select.val() || node.deviceId;
-            const tip = $('#node-input-lilitech-tip');
-
-            if (!headunit) {
-                tip.text('Select or create a headunit first.');
-                return;
-            }
-            tip.text('Loading lights...');
-            $.getJSON('lilitech/devices', { familyId: 'lights', config: headunitId, url: headunit.url })
-                .done(function (devices) {
-                    select.empty();
-                    devices
-                        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-                        .forEach(function (d) {
-                            $('<option/>')
-                                .val(d.deviceId)
-                                .text(`${d.name || d.deviceId} (${d.typeId})`)
-                                .data('device', d)
-                                .appendTo(select);
-                        });
-                    if (current && !devices.some((d) => d.deviceId === current)) {
-                        $('<option/>').val(current).text(`${node.deviceName || current} (not found)`).appendTo(select);
-                    }
-                    select.val(current || (devices[0] && devices[0].deviceId)).trigger('change');
-                    tip.text(devices.length ? '' : 'No lights found on this headunit.');
-                })
-                .fail(function (xhr) {
-                    tip.text((xhr.responseJSON && xhr.responseJSON.error) || 'Unable to load the lights.');
-                    if (current && !select.find(`option[value="${current}"]`).length) {
-                        $('<option/>').val(current).text(node.deviceName || current).appendTo(select);
-                        select.val(current);
-                    }
-                });
-        }
-
-        RED.nodes.registerType('lilitech-light', {
-            category: 'Lilitech',
-            color: '#F15A00',
-            defaults: {
-                name: { value: '' },
-                headunit: { value: '', type: 'lilitech-headunit', required: true },
-                deviceId: { value: '', required: true },
-                deviceName: { value: '' },
-                typeId: { value: '' },
-                outputMode: { value: 'feedback' },
-                initialState: { value: true }
-            },
-            inputs: 1,
-            outputs: 1,
-            icon: 'font-awesome/fa-lightbulb-o',
-            paletteLabel: 'light',
-            label: function () {
-                return this.name || this.deviceName || 'light';
-            },
-            labelStyle: function () {
-                return this.name ? 'node_label_italic' : '';
-            },
-            oneditprepare: function () {
-                const node = this;
-                showItems(node.typeId);
-                $('#node-input-deviceId').on('change', function () {
-                    const d = $(this).find(':selected').data('device');
-                    if (d) showItems(d.typeId, d.scenesAvailable);
-                });
-                $('#node-input-headunit').on('change', function () {
-                    loadDevices(node);
-                });
-                $('#node-input-lilitech-refresh').on('click', function () {
-                    loadDevices(node);
-                });
-            },
-            oneditsave: function () {
-                const d = $('#node-input-deviceId').find(':selected').data('device');
-                if (d) {
-                    this.deviceName = d.name;
-                    this.typeId = d.typeId;
-                }
-            }
-        });
-    })();
+    });
 </script>
 
 <script type="text/html" data-template-name="lilitech-light">

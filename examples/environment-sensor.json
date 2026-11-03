@@ -1,0 +1,75 @@
+[
+    {
+        "id": "a1c0de000000101",
+        "type": "comment",
+        "z": "",
+        "name": "Open the environment sensor node and select your sensor",
+        "info": "The debug node shows every value reported by the sensor; the switch node sends an alert above 26 °C.",
+        "x": 260,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a1c0de000000102",
+        "type": "lilitech-env-sensor",
+        "z": "",
+        "name": "",
+        "headunit": "a1c0de000000106",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "statistics": false,
+        "diagnostics": true,
+        "initialState": true,
+        "x": 160,
+        "y": 140,
+        "wires": [["a1c0de000000103", "a1c0de000000104"]]
+    },
+    {
+        "id": "a1c0de000000103",
+        "type": "debug",
+        "z": "",
+        "name": "sensor values",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 420,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a1c0de000000104",
+        "type": "switch",
+        "z": "",
+        "name": "temperature > 26",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [{ "t": "gt", "v": "26", "vt": "num" }],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 430,
+        "y": 180,
+        "wires": [["a1c0de000000105"]]
+    },
+    {
+        "id": "a1c0de000000105",
+        "type": "debug",
+        "z": "",
+        "name": "too hot",
+        "active": true,
+        "tosidebar": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 620,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a1c0de000000106",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

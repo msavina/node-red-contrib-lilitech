@@ -27,23 +27,25 @@ async function startFakeTube() {
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
-    core-devices finto: risponde all'elenco delle lights e registra i comandi ricevuti
+    core-devices finto: risponde all'elenco dei device (array = lights, oppure { familyId: [...] }) e registra i comandi
 ----------------------------------------------------------------------------------------------------------------------*/
-async function startFakeDevices(url, lights) {
+async function startFakeDevices(url, devices) {
     const socket = io(url, { transports: ['websocket'] });
     const received = [];
-    const emit = (eventName, payload) => socket.emit(eventName, { origin: 'UNIT', className: 'LightsService', eventName, payload });
+    const byFamily = Array.isArray(devices) ? { lights: devices } : devices;
+    const emit = (eventName, payload) => socket.emit(eventName, { origin: 'UNIT', className: 'DevicesService', eventName, payload });
 
     socket.on('DATABASE_LIST_REQUEST_DEVICES', (message) => {
-        if (message.payload.familyId !== 'lights') return;
-        emit('DATABASE_LIST_RESPONSE_DEVICES', { unitId: 'unit-1', familyId: 'lights', requestId: message.payload.requestId, devices: lights });
+        const { familyId, requestId } = message.payload;
+        if (!byFamily[familyId]) return;
+        emit('DATABASE_LIST_RESPONSE_DEVICES', { unitId: 'unit-1', familyId, requestId, devices: byFamily[familyId] });
     });
     socket.on('DATABASE_UPDATE_DEVICES', (message) => received.push(message));
     await new Promise((resolve) => socket.on('connect', resolve));
 
     return {
         received,
-        emitUpdate: (payload) => emit('DATABASE_UPDATE_DEVICES', { unitId: 'unit-1', familyId: 'lights', ...payload }),
+        emitUpdate: (payload, familyId = 'lights') => emit('DATABASE_UPDATE_DEVICES', { unitId: 'unit-1', familyId, ...payload }),
         close: () => socket.disconnect()
     };
 }

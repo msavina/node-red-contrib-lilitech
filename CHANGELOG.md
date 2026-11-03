@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.2.7
+
+- light and common node status labels are capitalized (e.g. `On · 80%`, `Off`, `Disconnected`, `Device Not Found`).
+
+## 0.2.6
+
+- environment sensor: node status labels are capitalized (e.g. `No Presence`, `Night`, `Sensor Lost`).
+
+## 0.2.5
+
+- environment sensor: the node status always shows the value; sensor lost / fault / low battery are appended (e.g. `45.2 % · sensor lost`).
+
+## 0.2.4
+
+- environment sensor: the items list in the editor shows only the measures; diagnostics (sensor loss, low battery, fault) are controlled by their own option.
+
+## 0.2.3
+
+- environment sensor: `luminosity` (and its min/max statistics) is rounded to an integer.
+
+## 0.2.2
+
+- environment sensor: the node status shows fault / sensor lost / low battery only when the feature is enabled on the sensor and diagnostics are enabled on the node.
+
+## 0.2.1
+
+- environment sensor: numeric values are rounded to 1 decimal (2 for `voc`), removing the float noise of the drivers (e.g. `26.899999618530273` → `26.9`). Timestamps are not rounded.
+
+## 0.2.0
+
+- New `environment sensor` node (read only): temperature, humidity, light, twilight, presence, air quality, barometer, wind, rain and soil moisture sensors, with units of measure, optional min/max statistics and diagnostics.
+- Requires a headunit that answers the device list request for `environment-sensors`.
+
 ## 0.1.2
 
 - light: `color` also accepts `"{r:255,g:0,b:0}"` (unquoted keys), `"255,0,0"` and `"rgb(255,0,0)"` strings.

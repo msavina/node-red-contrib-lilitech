@@ -53,7 +53,28 @@ Select the headunit and the light: the list is loaded from the headunit, and the
 
 Each writable item has a `...Feedback` item with the state confirmed by the device. `brightness`, `brightnessColor` and `temperature` are percentages (0-100). DALI lights with scenes enabled also accept `scene` (0-15).
 
-An example flow is available in **Menu → Import → Examples → node-red-contrib-lilitech**.
+### environment sensor
+
+Read only: the node has no input and emits a message every time a value of the sensor changes, with `msg.topic` = item name, `msg.payload` = value and `msg.unit` = unit of measure.
+
+| Sensor type | Items | Optional (enabled in the app) |
+|---|---|---|
+| temperatureSensor | temperatureValue (°C) | |
+| humiditySensor | humidityValue (%) | |
+| lightSensor | luminosity (lx) | solarRadiation (W/m²) |
+| twilightSensor | twilight (`true` = night) | |
+| presenceSensor | presence | |
+| airQualitySensor | coTwo (ppm) | voc (mg/m³) |
+| barometerSensor | pressureValue (hPa) | |
+| windSensor | windSpeed (km/h) | windDirection (°), windGusts |
+| rainSensor | rainStatus | rainAmount, rainAmountRelative (mm), rainAmountRelativeTimestamp |
+| soilMoistureSensor | soilMoisture (%) | evaporation |
+
+Options:
+- **Send min/max statistics**: numeric sensors also emit `...MinValue`, `...MaxValue`, `...MinTimestamp`, `...MaxTimestamp` (e.g. `temperatureMaxValue`).
+- **Send diagnostics** (default on): `sensorLoss`, `lowBattery`, `faultSignal`, when the feature is enabled on the sensor.
+
+Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License
 

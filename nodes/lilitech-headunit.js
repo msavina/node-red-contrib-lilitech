@@ -1,6 +1,7 @@
 'use strict';
 
 const { TubeClient } = require('../lib/tube-client');
+const families = require('../lib/families');
 
 const DEFAULT_URL = 'http://127.0.0.1:3000';
 
@@ -74,7 +75,8 @@ module.exports = function (RED) {
     ------------------------------------------------------------------------------------------------------------------*/
     RED.httpAdmin.get('/lilitech/devices', RED.auth.needsPermission('lilitech-headunit.read'), async function (req, res) {
         const familyId = String(req.query.familyId || '');
-        if (!familyId) return res.status(400).json({ error: 'familyId is required' });
+        const family = families[familyId];
+        if (!family) return res.status(400).json({ error: `Unknown familyId "${familyId}"` });
 
         const configNode = req.query.config ? RED.nodes.getNode(String(req.query.config)) : null;
         const url = String(req.query.url || DEFAULT_URL);
@@ -95,7 +97,7 @@ module.exports = function (RED) {
                 });
             }
             const devices = await client.listDevices(familyId);
-            res.json(devices.map((d) => ({ deviceId: d.deviceId, name: d.name, typeId: d.typeId, roomId: d.roomId, scenesAvailable: !!d.scenesAvailable })));
+            res.json(devices.map((d) => ({ deviceId: d.deviceId, name: d.name, typeId: d.typeId, roomId: d.roomId, items: family.editorItems(d) })));
         } catch (error) {
             res.status(503).json({ error: error.message });
         } finally {

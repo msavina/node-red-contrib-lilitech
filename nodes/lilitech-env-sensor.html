@@ -1,0 +1,155 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-env-sensor', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            statistics: { value: false },
+            diagnostics: { value: true },
+            initialState: { value: true }
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: 'font-awesome/fa-thermometer-half',
+        paletteLabel: 'environment sensor',
+        label: function () {
+            return this.name || this.deviceName || 'environment sensor';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'environment-sensors');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-env-sensor">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-thermometer-half"></i> Sensor</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload sensors"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-statistics">&nbsp;</label>
+        <input type="checkbox" id="node-input-statistics" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-statistics" style="width: 70%">Send min/max statistics</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-diagnostics">&nbsp;</label>
+        <input type="checkbox" id="node-input-diagnostics" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-diagnostics" style="width: 70%">Send diagnostics (sensor loss, low battery, fault)</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-env-sensor">
+    <p>Emits the values of a Lilitech environment sensor. The node has no input: sensors are read only.</p>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>temperatureValue</code>.</dd>
+        <dt>payload <span class="property-type">number | boolean</span></dt>
+        <dd>Item value. Timestamps are milliseconds since epoch.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure, e.g. <code>°C</code>, when the item has one.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd><code>UNIT</code> (headunit/drivers), <code>APP</code> or <code>INITIAL</code> (state sent on deploy).</dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Items</th>
+            <th>Optional (enabled in the app)</th>
+        </tr>
+        <tr>
+            <td>temperatureSensor</td>
+            <td>temperatureValue (°C)</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>humiditySensor</td>
+            <td>humidityValue (%)</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>lightSensor</td>
+            <td>luminosity (lx)</td>
+            <td>solarRadiation (W/m²)</td>
+        </tr>
+        <tr>
+            <td>twilightSensor</td>
+            <td>twilight (true = night)</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>presenceSensor</td>
+            <td>presence</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>airQualitySensor</td>
+            <td>coTwo (ppm)</td>
+            <td>voc (mg/m³)</td>
+        </tr>
+        <tr>
+            <td>barometerSensor</td>
+            <td>pressureValue (hPa)</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>windSensor</td>
+            <td>windSpeed (km/h)</td>
+            <td>windDirection (°), windGusts</td>
+        </tr>
+        <tr>
+            <td>rainSensor</td>
+            <td>rainStatus</td>
+            <td>rainAmount, rainAmountRelative (mm), rainAmountRelativeTimestamp</td>
+        </tr>
+        <tr>
+            <td>soilMoistureSensor</td>
+            <td>soilMoisture (%)</td>
+            <td>evaporation</td>
+        </tr>
+    </table>
+    <p>
+        With <i>Send min/max statistics</i> numeric sensors also emit <code>...MinValue</code>, <code>...MaxValue</code>,
+        <code>...MinTimestamp</code> and <code>...MaxTimestamp</code> (e.g. <code>temperatureMaxValue</code>).
+    </p>
+    <p>
+        With <i>Send diagnostics</i> the node emits <code>sensorLoss</code>, <code>lowBattery</code> and <code>faultSignal</code> when
+        the corresponding feature is enabled on the sensor.
+    </p>
+</script>
