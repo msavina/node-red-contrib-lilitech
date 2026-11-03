@@ -104,6 +104,30 @@ The **Output** option controls `areaControl`: not emitted with **Area state only
 
 Read only: emits the status of an electronic device (smartphone, laptop, tablet, watch, printer, scanner...) every time it changes, with `msg.topic` = `isOnline` and `msg.payload` = `true` (online) or `false` (offline).
 
+### actuator
+
+Controls pumps, valves, sprinklers, faucets, servo valves and thermostatic valves, and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch a pump, valve, sprinkler or faucet |
+| `topic: "proportionalDrive"`, `payload: 60` | set the opening of a proportional actuator (0-100 %) |
+| `payload: "open"` / `"close"` / `"stop"` (or `true` / `false`) | drive a servo valve |
+| `payload: 21.5` | set the setpoint of a thermostatic valve (4-30 °C, steps of 0.5) |
+| `payload: { "switch": true, "proportionalDrive": 60 }` | write several items at once |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`.
+
+| Actuator type | Writable items | Read only |
+|---|---|---|
+| pump, valve, sprinkler, faucet | switch, proportionalDrive (proportional actuators only) | powerOffTimerAt |
+| servoValve | drive (`open`, `close`, `stop`) | driveFeedback (`open`, `opening`, `close`, `closing`, `stop`, `idle`) |
+| thermostaticValve | setpointTemperature (°C) | roomTemperature (°C), proportionalDriveFeedback (valve opening, %), battery (%) |
+
+Each writable item has a `...Feedback` item with the state confirmed by the device. When enabled on the actuator in the app, every type also emits `volumeValue` / `volumeRelative` (l) with `volumeRelativeTimestamp`, `openStatus` and `faultSignal`.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

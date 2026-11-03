@@ -1,0 +1,95 @@
+[
+    {
+        "id": "a4c7a0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the actuator node and select your pump, valve, sprinkler or faucet",
+        "info": "Inject nodes switch the actuator; the debug node shows the state reported by the headunit. With a servo valve send \"open\", \"close\" or \"stop\"; with a thermostatic valve send the setpoint in °C.",
+        "x": 290,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a4c7a0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "on",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [["a4c7a0000000006"]]
+    },
+    {
+        "id": "a4c7a0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "off",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 160,
+        "wires": [["a4c7a0000000006"]]
+    },
+    {
+        "id": "a4c7a0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["a4c7a0000000006"]]
+    },
+    {
+        "id": "a4c7a0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "opening 50% (proportional)",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "proportionalDrive",
+        "payload": "50",
+        "payloadType": "num",
+        "x": 190,
+        "y": 240,
+        "wires": [["a4c7a0000000006"]]
+    },
+    {
+        "id": "a4c7a0000000006",
+        "type": "lilitech-actuator",
+        "z": "",
+        "name": "",
+        "headunit": "a4c7a0000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 420,
+        "y": 180,
+        "wires": [["a4c7a0000000007"]]
+    },
+    {
+        "id": "a4c7a0000000007",
+        "type": "debug",
+        "z": "",
+        "name": "actuator state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 620,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a4c7a0000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

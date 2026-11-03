@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- New `actuator` node: switches pumps, valves, sprinklers and faucets (with `proportionalDrive` on proportional actuators), drives servo valves (`open` / `close` / `stop`) and sets the setpoint of thermostatic valves.
+- Emits the feedbacks, `roomTemperature`, valve opening, battery, volume, `openStatus` and `faultSignal` (when enabled on the actuator), with `msg.unit`.
+- Requires a headunit that answers the device list request for `actuators`.
+
 ## 0.4.1
 
 - electronic: the item is `isOnline` (boolean, `true` = online), the same used by the Lilitech app, instead of `status`.
