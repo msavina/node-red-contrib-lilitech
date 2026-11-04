@@ -1,0 +1,132 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-metering-sensor', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-tachometer',
+        paletteLabel: 'metering sensor',
+        label: function () {
+            return this.name || this.deviceName || 'metering sensor';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'metering-sensors');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-metering-sensor">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-tachometer"></i> Sensor</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload metering sensors"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-metering-sensor">
+    <p>
+        Emits the measures of a Lilitech metering sensor (single and three phase energy meters, volume, pressure, level and
+        temperature sensors) and resets the relative energy of the energy meters.
+    </p>
+
+    <h3>Inputs</h3>
+    <p>Energy meters only: the other sensors have no commands.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>
+            The energy to reset, like the reset buttons of the app: <code>activeEnergyRelativeLaReset</code> (single phase and phase 1),
+            <code>activeEnergyRelativeLbReset</code>, <code>activeEnergyRelativeLcReset</code> and
+            <code>activeEnergyRelativeTotalReset</code> (three phase).
+        </dd>
+        <dt>payload <span class="property-type">boolean | object</span></dt>
+        <dd><code>true</code>, or an object with the items, e.g. <code>{"activeEnergyRelativeTotalReset": true}</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>activePowerLaValue</code>.</dd>
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Item value.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure, e.g. <code>W</code>.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Read only</th>
+        </tr>
+        <tr>
+            <td>singlePhaseEnergyMeter</td>
+            <td>
+                activeEnergyAbsoluteLaValue, activeEnergyRelativeLaValue (Wh), activeEnergyRelativeLaValueTimestamp (last reset); when
+                enabled in the app: activePowerLaValue (W), reactivePowerLaValue (var), apparentPowerLaValue (VA), powerFactorLaValue,
+                voltageLaValue (V), currentLaValue (A), frequencyLaValue (Hz)
+            </td>
+        </tr>
+        <tr>
+            <td>threePhaseEnergyMeter</td>
+            <td>
+                the same items for the phases La, Lb and Lc, plus the totals activeEnergyAbsoluteTotalValue, activeEnergyRelativeTotalValue,
+                activeEnergyRelativeTotalValueTimestamp and totalActivePowerValue (W, when active power is enabled)
+            </td>
+        </tr>
+        <tr>
+            <td>volumeSensor, pressureSensor, levelSensor, temperatureSensor</td>
+            <td>volumeValue (m³), pressureValue (bar), levelValue (m), temperatureValue (°C)</td>
+        </tr>
+    </table>
+    <p>
+        When enabled in the app the node also emits <code>sensorLoss</code>, <code>lowBattery</code> and <code>faultSignal</code>, shown in
+        the node status like the badges of the app card.
+    </p>
+
+    <h3>Details</h3>
+    <p>
+        Energies and powers are in Wh and W, as sent by the headunit (the app shows them in kWh and kW). Thresholds and energy cost are
+        configured in the app: the node does not expose them.
+    </p>
+</script>

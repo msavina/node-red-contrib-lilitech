@@ -1,0 +1,58 @@
+[
+    {
+        "id": "f3a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the metering sensor node and select your energy meter",
+        "info": "The debug node shows the measures sent by the headunit; the inject node resets the relative energy of a single phase meter (use activeEnergyRelativeTotalReset for the total of a three phase meter).",
+        "x": 260,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f3a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "reset energy",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "activeEnergyRelativeLaReset",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 120,
+        "wires": [["f3a0d0000000003"]]
+    },
+    {
+        "id": "f3a0d0000000003",
+        "type": "lilitech-metering-sensor",
+        "z": "",
+        "name": "",
+        "headunit": "f3a0d0000000005",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "initialState": true,
+        "x": 350,
+        "y": 120,
+        "wires": [["f3a0d0000000004"]]
+    },
+    {
+        "id": "f3a0d0000000004",
+        "type": "debug",
+        "z": "",
+        "name": "measures",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 550,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f3a0d0000000005",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

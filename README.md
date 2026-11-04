@@ -288,6 +288,27 @@ The resets are available only for the measures enabled on the socket in the app.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`: `switchFeedback`, `overload`, `economy` and `green` (energy management), `simulated` (switched by the presence simulator) and, when enabled in the app, energy and energyRelative (Wh), power / powerMin / powerMax (W), current / currentMin / currentMax (A), voltage / voltageMin / voltageMax (V) and `faultSignal`. `switch` is emitted only with **Feedback and commands**.
 
+### metering sensor
+
+Emits the measures of single and three phase energy meters and of volume, pressure, level and temperature sensors, and resets the relative energy of the energy meters.
+
+**Input** (energy meters only)
+
+| msg | Effect |
+|---|---|
+| `topic: "activeEnergyRelativeLaReset"`, `payload: true` | reset the relative energy of a single phase meter (or of phase 1), like the reset button of the app |
+| `topic: "activeEnergyRelativeLbReset"` / `"activeEnergyRelativeLcReset"` / `"activeEnergyRelativeTotalReset"`, `payload: true` | three phase meters: reset phase 2, phase 3 or the total |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`.
+
+| Type | Items |
+|---|---|
+| singlePhaseEnergyMeter | activeEnergyAbsoluteLaValue, activeEnergyRelativeLaValue (Wh) and activeEnergyRelativeLaValueTimestamp (last reset); when enabled in the app activePowerLaValue (W), reactivePowerLaValue (var), apparentPowerLaValue (VA), powerFactorLaValue, voltageLaValue (V), currentLaValue (A), frequencyLaValue (Hz) |
+| threePhaseEnergyMeter | the same items for La, Lb and Lc, plus activeEnergyAbsoluteTotalValue, activeEnergyRelativeTotalValue, activeEnergyRelativeTotalValueTimestamp and totalActivePowerValue (W, with active power enabled) |
+| volumeSensor, pressureSensor, levelSensor, temperatureSensor | volumeValue (m³), pressureValue (bar), levelValue (m), temperatureValue (°C) |
+
+When enabled in the app the node also emits `sensorLoss`, `lowBattery` and `faultSignal`, shown in the node status like the badges of the app card. Energies and powers are in Wh and W, as sent by the headunit (the app shows kWh and kW); thresholds and energy cost are configured in the app.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

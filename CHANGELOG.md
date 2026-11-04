@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.15.1
+
+- `metering sensor`: the editor lists only the writable items (the energy resets); the measure of volume, pressure, level and temperature sensors is output only.
+
+## 0.15.0
+
+- New `metering sensor` node: emits the measures of single and three phase energy meters (energies in Wh, powers in W, voltage, current, frequency and power factor per phase, as enabled in the app) and of volume, pressure, level and temperature sensors, with `msg.unit`.
+- Resets the relative energy of the energy meters like the app (`activeEnergyRelativeLaReset`, `...LbReset`, `...LcReset`, `...TotalReset`).
+- Emits `sensorLoss`, `lowBattery` and `faultSignal` when enabled, shown in the node status.
+- Requires a headunit that answers the device list request for `metering-sensors`.
+
 ## 0.14.4
 
 - `automation`: emits `simulated` (the automation is moved by the presence simulator, like the badge on the app card) and shows "Simulated" in the node status.
