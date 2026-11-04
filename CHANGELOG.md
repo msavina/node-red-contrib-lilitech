@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+- New `charger` node: switches simple EV chargers and drives smart chargers: start/pause (`play` / `pause`), lock/unlock and maximum charging current (`maxChargingCurrent`, 1-16 A).
+- Emits `switchFeedback` and the measures enabled in the app (power, energy, current, voltage) of simple chargers, `status`, `statusLock`, `chargingPower`, `addedEnergy`, `chargingTime` and `sessionTime` of smart chargers, `overload` / `economy` / `green` and `faultSignal`, with `msg.unit`.
+- Requires a headunit that answers the device list request for `chargers`.
+
 ## 0.7.0
 
 - New `notifier` node: switches sirens, buzzers, flashes and status leds (`true` / `false` / `"toggle"`), starts the test (when *testable*) and sets the maintenance.

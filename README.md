@@ -172,6 +172,28 @@ Controls sirens, buzzers, flashes and status leds, and emits their state.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `switchFeedback`, `test`, `maintenance` and, when enabled on the notifier in the app, `tamperSignal` and `lowBattery`. `switch` is emitted only with **Feedback and commands**.
 
+### charger
+
+Controls EV chargers and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch a simple charger |
+| `payload: "play"` / `"pause"` (or `true` / `false`, `"toggle"`) | start or pause the charge of a smart charger |
+| `payload: "lock"` / `"unlock"` | lock or unlock a smart charger |
+| `topic: "maxChargingCurrent"`, `payload: 10` | set the maximum charging current of a smart charger (1-16 A) |
+
+A smart charger accepts one item per message.
+
+| Charger type | Writable items | Read only |
+|---|---|---|
+| charger | switch | switchFeedback; when enabled in the app: power (W), energy and energyRelative (Wh), current (A), voltage (V) |
+| smartCharger | command (`play`, `pause`), commandLock, maxChargingCurrent (A) | status, statusLock, chargingPower (kW), addedEnergy (kWh), chargingTime and sessionTime (s) |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`. Both types also emit `overload`, `economy` and `green` (energy management) and, when enabled in the app, `faultSignal`. `status` is one of `disconnected`, `ready`, `charging`, `paused`, `scheduled`, `locked`, `lockedCarConnected`, `waitingForCarDemand`, `error`... `switch`, `command` and `commandLock` are emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

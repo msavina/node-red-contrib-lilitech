@@ -1,0 +1,107 @@
+[
+    {
+        "id": "c9a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the charger node and select your smart charger",
+        "info": "Inject nodes start and pause the charge, lock and unlock the charger and set the maximum charging current; the debug node shows the state reported by the headunit. On a simple charger send true / false instead.",
+        "x": 260,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "c9a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "play",
+        "props": [{ "p": "payload" }],
+        "payload": "play",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [["c9a0d0000000007"]]
+    },
+    {
+        "id": "c9a0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "pause",
+        "props": [{ "p": "payload" }],
+        "payload": "pause",
+        "payloadType": "str",
+        "x": 130,
+        "y": 160,
+        "wires": [["c9a0d0000000007"]]
+    },
+    {
+        "id": "c9a0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "lock",
+        "props": [{ "p": "payload" }],
+        "payload": "lock",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["c9a0d0000000007"]]
+    },
+    {
+        "id": "c9a0d0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "unlock",
+        "props": [{ "p": "payload" }],
+        "payload": "unlock",
+        "payloadType": "str",
+        "x": 130,
+        "y": 240,
+        "wires": [["c9a0d0000000007"]]
+    },
+    {
+        "id": "c9a0d0000000006",
+        "type": "inject",
+        "z": "",
+        "name": "max 10 A",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "maxChargingCurrent",
+        "payload": "10",
+        "payloadType": "num",
+        "x": 140,
+        "y": 280,
+        "wires": [["c9a0d0000000007"]]
+    },
+    {
+        "id": "c9a0d0000000007",
+        "type": "lilitech-charger",
+        "z": "",
+        "name": "",
+        "headunit": "c9a0d0000000009",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 410,
+        "y": 200,
+        "wires": [["c9a0d0000000008"]]
+    },
+    {
+        "id": "c9a0d0000000008",
+        "type": "debug",
+        "z": "",
+        "name": "charger state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 620,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "c9a0d0000000009",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
