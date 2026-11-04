@@ -51,7 +51,7 @@ Select the headunit and the light: the list is loaded from the headunit, and the
 | rgbWhite | switch, brightness, color, brightnessColor |
 | rgbTunableWhite | switch, brightness, temperature, color, brightnessColor |
 
-Each writable item has a `...Feedback` item with the state confirmed by the device. `brightness`, `brightnessColor` and `temperature` are percentages (0-100). DALI lights with scenes enabled also accept `scene` (0-15).
+Each writable item has a `...Feedback` item with the state confirmed by the device. `brightness`, `brightnessColor` and `temperature` are percentages (0-100). DALI lights with scenes enabled also accept `scene` (0-15). `simulated` is emitted when the presence simulator switches the light (the badge on the app card) and is shown in the node status.
 
 ### environment sensor
 
@@ -153,7 +153,7 @@ The commands follow the features enabled on the automation in the app:
 | absolutePosition | when *positionable* |
 | absolutePositionFoil | when *inclinable* |
 
-**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`. `driveFeedback` is one of `open`, `opening`, `close`, `closing`, `stop`, `idle`, `locked`, `locking`, `unlocked`, `unlocking`, `block`, `alarm`; positions come as `absolutePositionFeedback` / `absolutePositionFoilFeedback`. When enabled in the app the node also emits `openStatus` and `faultSignal`, and a lockable front door emits `status` (`online` / `offline`) and `battery` (%).
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`. `driveFeedback` is one of `open`, `opening`, `close`, `closing`, `stop`, `idle`, `locked`, `locking`, `unlocked`, `unlocking`, `block`, `alarm`; positions come as `absolutePositionFeedback` / `absolutePositionFoilFeedback`. When enabled in the app the node also emits `openStatus` and `faultSignal`, and a lockable front door emits `status` (`online` / `offline`) and `battery` (%). `simulated` is emitted when the presence simulator moves the automation (the badge on the app card) and is shown in the node status.
 
 Commands sent from Node-RED do not ask for the PIN, even when the automation is secured in the app.
 
@@ -271,6 +271,22 @@ Controls conditioners, fancoils, boilers, chillers, heat pumps, dehumidifiers, a
 The headunit applies temperature and humidity only while the hvac is on. Changing the temperature outside the *manual* profile starts an override, restored after `overrideTime` or with `overrideRestore`. Override time, profile temperatures and the chrono schedule are configured in the app.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (`°C`, `%`, `ms`), `msg.origin` and `msg.device`. Besides the feedbacks: `roomTemperature`, `thermoStatus` (`off`, `idle`, `heat`, `cool`, `dry`, `fan`, `inhibit`, `standby`), `overrideFeedback`, `overrideTime` (ms), `overrideTimeAt`, `chronoSetpoint`, `roomHumidity`, `humidityStatus`, `deliveryTemperature` / `returnTemperature` / `acsTemperature` / `pressureValue` on boilers, chillers and heat pumps, and `faultSignal`, each when enabled in the app. The commands are emitted only with **Feedback and commands**.
+
+### socket
+
+Controls simple and measurable sockets and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch the socket |
+| `topic: "restoreEnergy"`, `payload: true` | reset the relative energy, like the reset button of the app |
+| `topic: "restorePower"` / `"restoreCurrent"` / `"restoreVoltage"`, `payload: true` | reset minimum and maximum of that measure |
+
+The resets are available only for the measures enabled on the socket in the app. The power off timer is configured in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`: `switchFeedback`, `overload`, `economy` and `green` (energy management), `simulated` (switched by the presence simulator) and, when enabled in the app, energy and energyRelative (Wh), power / powerMin / powerMax (W), current / currentMin / currentMax (A), voltage / voltageMin / voltageMax (V) and `faultSignal`. `switch` is emitted only with **Feedback and commands**.
 
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 

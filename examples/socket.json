@@ -1,0 +1,95 @@
+[
+    {
+        "id": "f2a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the socket node and select your socket",
+        "info": "Inject nodes switch the socket on and off or toggle it and reset the relative energy (when energy is enabled on the socket in the app); the debug node shows the state reported by the headunit.",
+        "x": 240,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f2a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "on",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [["f2a0d0000000006"]]
+    },
+    {
+        "id": "f2a0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "off",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 160,
+        "wires": [["f2a0d0000000006"]]
+    },
+    {
+        "id": "f2a0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["f2a0d0000000006"]]
+    },
+    {
+        "id": "f2a0d0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "reset energy",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "restoreEnergy",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 240,
+        "wires": [["f2a0d0000000006"]]
+    },
+    {
+        "id": "f2a0d0000000006",
+        "type": "lilitech-socket",
+        "z": "",
+        "name": "",
+        "headunit": "f2a0d0000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 340,
+        "y": 180,
+        "wires": [["f2a0d0000000007"]]
+    },
+    {
+        "id": "f2a0d0000000007",
+        "type": "debug",
+        "z": "",
+        "name": "socket state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 530,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f2a0d0000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

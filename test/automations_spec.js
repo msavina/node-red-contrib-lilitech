@@ -38,10 +38,11 @@ describe('automations family', function () {
     });
 
     it('exposes the items enabled by the features', function () {
-        assert.deepStrictEqual(automations.readableItems(shutter), ['drive', 'driveFeedback', 'absolutePosition', 'absolutePositionFeedback']);
+        assert.deepStrictEqual(automations.readableItems(shutter), ['drive', 'driveFeedback', 'absolutePosition', 'absolutePositionFeedback', 'simulated']);
         assert.deepStrictEqual(automations.readableItems({ ...frontDoor, openInfo: true, faultInfo: true }), [
             'drive',
             'driveFeedback',
+            'simulated',
             'openStatus',
             'faultSignal',
             'status',
@@ -63,6 +64,7 @@ describe('automations family', function () {
         assert.strictEqual(automations.status({ ...gate, driveFeedback: 'open' }).text, 'Open');
         assert.strictEqual(automations.status({ ...frontDoor, driveFeedback: 'locked' }).text, 'Locked');
         assert.strictEqual(automations.status(gate).text, 'Unknown');
+        assert.strictEqual(automations.status({ ...shutter, driveFeedback: 'open', simulated: true }).text, 'Open · Simulated');
         const fault = automations.status({ ...gate, driveFeedback: 'close', faultInfo: true, faultSignal: true });
         assert.deepStrictEqual([fault.fill, fault.text], ['red', 'Closed · Fault']);
     });

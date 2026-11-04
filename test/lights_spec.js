@@ -55,4 +55,14 @@ describe('lights family', function () {
         // Un topic qualsiasi con un payload booleano resta un comando switch
         assert.deepStrictEqual(lights.parseInput({ topic: 'kitchen', payload: true }, dimmer, {}), { switch: true });
     });
+
+    it('shows the presence simulator in the status', function () {
+        assert.deepStrictEqual(lights.status({ ...dimmer, switchFeedback: true, brightnessFeedback: 80, simulated: true }), {
+            fill: 'green',
+            shape: 'dot',
+            text: 'On · 80% · Simulated'
+        });
+        assert.strictEqual(lights.status({ ...dimmer, switchFeedback: false, simulated: true }).text, 'Off · Simulated');
+        assert.strictEqual(lights.status({ ...dimmer, switchFeedback: false, simulated: false }).text, 'Off');
+    });
 });

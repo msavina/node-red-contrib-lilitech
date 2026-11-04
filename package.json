@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-lilitech",
-    "version": "0.13.1",
+    "version": "0.14.4",
     "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
     "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
     "license": "MIT",
@@ -39,7 +39,9 @@
         "hvac",
         "air conditioner",
         "fancoil",
-        "boiler"
+        "boiler",
+        "socket",
+        "smart plug"
     ],
     "repository": {
         "type": "git",
@@ -73,7 +75,8 @@
             "lilitech-appliance": "nodes/lilitech-appliance.js",
             "lilitech-energy-management": "nodes/lilitech-energy-management.js",
             "lilitech-irrigation": "nodes/lilitech-irrigation.js",
-            "lilitech-hvac": "nodes/lilitech-hvac.js"
+            "lilitech-hvac": "nodes/lilitech-hvac.js",
+            "lilitech-socket": "nodes/lilitech-socket.js"
         }
     },
     "engines": {

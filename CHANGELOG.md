@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.14.4
+
+- `automation`: emits `simulated` (the automation is moved by the presence simulator, like the badge on the app card) and shows "Simulated" in the node status.
+- `light`: `powerOffTimerAt` is no longer emitted (the timer is managed in the app).
+
+## 0.14.3
+
+- `light`: shows "Simulated" in the node status when the presence simulator switches the light, like the badge on the app card (`simulated` was already emitted).
+
+## 0.14.2
+
+- `socket`: emits `simulated` (the socket is switched by the presence simulator, like the badge on the app card) and shows "Simulated" in the node status.
+
+## 0.14.1
+
+- `socket`: `powerOffTimerAt` is no longer emitted and the node status no longer shows the power off time (the timer is managed in the app).
+
+## 0.14.0
+
+- New `socket` node: switches simple and measurable sockets (`true` / `false` / `"toggle"`) and resets their measures like the app (`restoreEnergy` resets the relative energy, `restorePower` / `restoreCurrent` / `restoreVoltage` reset minimum and maximum).
+- Emits `switchFeedback`, `overload` / `economy` / `green` and, when enabled in the app, the measures with their minimum and maximum, `powerOffTimerAt` and `faultSignal`, with `msg.unit`.
+- Requires a headunit that answers the device list request for `sockets`.
+
 ## 0.13.1
 
 - `hvac`: `overrideTime` is no longer writable (it is configured in the app) and is only emitted.
