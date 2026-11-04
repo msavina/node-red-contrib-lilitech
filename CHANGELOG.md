@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.0
+
+- New `security sensor` node: emits `input`, `trigger` (every alarm), `armed`, `exclusion`, `testing`, `maintenance` and the anomalies enabled in the app (tamper, sensor loss, low battery, fault, masked, weak, pet detected, max alarms reached), shown in the node status like the badges of the app card.
+- Writes `exclusion` (sensors with *excludible*), `testing` and `maintenance` like the toggles of the app; `msg.topic` is required. The exclusion timer is set in the app.
+- Requires a headunit that answers the device list request for `security-sensors`.
+
 ## 0.15.1
 
 - `metering sensor`: the editor lists only the writable items (the energy resets); the measure of volume, pressure, level and temperature sensors is output only.

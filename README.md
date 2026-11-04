@@ -309,6 +309,20 @@ Emits the measures of single and three phase energy meters and of volume, pressu
 
 When enabled in the app the node also emits `sensorLoss`, `lowBattery` and `faultSignal`, shown in the node status like the badges of the app card. Energies and powers are in Wh and W, as sent by the headunit (the app shows kWh and kW); thresholds and energy cost are configured in the app.
 
+### security sensor
+
+Emits the state and the alarms of a security sensor (contacts, volumetric, barrier and shock sensors, flood, smoke, fire and gas detectors, panic buttons, line, key and float switches) and excludes it, tests it or puts it in maintenance like the app.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `topic: "exclusion"`, `payload: true` / `false` | exclude / include the sensor (only with *excludible* enabled in the app; the exclusion timer is set in the app) |
+| `topic: "testing"`, `payload: true` / `false` | test mode: the sensor does not trigger the alarm |
+| `topic: "maintenance"`, `payload: true` / `false` | maintenance: the sensor is ignored |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `input` (`true` = open / activated), `trigger` (`true` each time the sensor triggers its armed area), `armed`, `exclusion`, `testing`, `maintenance` and, when enabled in the app, `tamper`, `sensorLoss`, `lowBattery`, `faultSignal`, `masked`, `weak`, `petDetected` and `maxAlarmsReached`.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

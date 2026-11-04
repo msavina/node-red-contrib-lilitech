@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-lilitech",
-    "version": "0.15.1",
+    "version": "0.16.0",
     "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
     "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
     "license": "MIT",
@@ -43,7 +43,10 @@
         "socket",
         "smart plug",
         "energy meter",
-        "metering"
+        "metering",
+        "security sensor",
+        "motion sensor",
+        "door contact"
     ],
     "repository": {
         "type": "git",
@@ -79,7 +82,8 @@
             "lilitech-irrigation": "nodes/lilitech-irrigation.js",
             "lilitech-hvac": "nodes/lilitech-hvac.js",
             "lilitech-socket": "nodes/lilitech-socket.js",
-            "lilitech-metering-sensor": "nodes/lilitech-metering-sensor.js"
+            "lilitech-metering-sensor": "nodes/lilitech-metering-sensor.js",
+            "lilitech-security-sensor": "nodes/lilitech-security-sensor.js"
         }
     },
     "engines": {

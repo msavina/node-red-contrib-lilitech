@@ -1,0 +1,71 @@
+[
+    {
+        "id": "f4a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the security sensor node and select your sensor",
+        "info": "The debug node shows the state of the sensor (input) and its alarms (trigger); the inject nodes put the sensor in maintenance and back.",
+        "x": 240,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f4a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "maintenance on",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "maintenance",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 120,
+        "wires": [["f4a0d0000000004"]]
+    },
+    {
+        "id": "f4a0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "maintenance off",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "maintenance",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 160,
+        "wires": [["f4a0d0000000004"]]
+    },
+    {
+        "id": "f4a0d0000000004",
+        "type": "lilitech-security-sensor",
+        "z": "",
+        "name": "",
+        "headunit": "f4a0d0000000006",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "initialState": true,
+        "x": 360,
+        "y": 140,
+        "wires": [["f4a0d0000000005"]]
+    },
+    {
+        "id": "f4a0d0000000005",
+        "type": "debug",
+        "z": "",
+        "name": "sensor state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 560,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f4a0d0000000006",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
