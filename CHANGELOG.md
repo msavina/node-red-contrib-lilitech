@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.13.1
+
+- `hvac`: `overrideTime` is no longer writable (it is configured in the app) and is only emitted.
+- `hvac`: temperature and humidity are sent also while the hvac is off, without an error; the headunit applies them only while it is on.
+
+## 0.13.0
+
+- New `hvac` node for conditioners, fancoils, boilers, chillers, heat pumps, dehumidifiers, air purifiers, fans and vmc. It offers only the items enabled on the hvac in the app:
+  - `switch`; on conditioners and fancoils `setpointTemperature` (5-35 °C, step 0.5), `thermoProfile`, `thermoMode` (only the modes enabled in the app), `overrideTime` and `overrideRestore`;
+  - `setpointHumidity` with humidity control, `fanSpeed` / `fanAuto` / `fanEco` / `fanStrong` / `fanDirection` with fan management, `supplyFanSpeed` / `returnFanSpeed` on vmc.
+- Emits the feedbacks, `roomTemperature`, `thermoStatus`, the override state, `chronoSetpoint`, `roomHumidity`, `humidityStatus`, the plant measures of boilers, chillers and heat pumps and `faultSignal`, with `msg.unit`.
+- Temperature and humidity are rejected while the hvac is off, since the headunit would ignore them.
+- Requires a headunit that answers the device list request for `hvac`.
+
 ## 0.12.1
 
 - `irrigation`: a program command without `msg.program` (e.g. `topic: "programsCmd"`, `payload: "play"`) uses the program of the irrigation when it has only one; with several programs the error lists their ids and names.

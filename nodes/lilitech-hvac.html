@@ -1,0 +1,168 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-hvac', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-snowflake-o',
+        paletteLabel: 'hvac',
+        label: function () {
+            return this.name || this.deviceName || 'hvac';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'hvac');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-hvac">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-snowflake-o"></i> Hvac</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload hvacs"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="feedback">Feedback only (actual state)</option>
+            <option value="all">Feedback and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-hvac">
+    <p>
+        Controls a Lilitech hvac (conditioner, fancoil, boiler, chiller, heat pump, dehumidifier, air purifier, fan, vmc) and emits its state
+        changes. The node offers only the items enabled on the hvac in the app.
+    </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean | number | string | object</span></dt>
+        <dd>
+            <ul>
+                <li><code>true</code> / <code>false</code>, <code>"on"</code> / <code>"off"</code> or <code>"toggle"</code> switches it.</li>
+                <li>A number sets the temperature on conditioners and fancoils (5-35 °C, step 0.5) and the humidity on dehumidifiers (%).</li>
+                <li>
+                    On conditioners and fancoils a profile name (<code>"comfort"</code>, <code>"economy"</code>, <code>"protection"</code>,
+                    <code>"standby"</code>, <code>"manual"</code>, <code>"chrono"</code>) or a mode name (<code>"heat"</code>, <code>"cool"</code>,
+                    <code>"dry"</code>, <code>"fan"</code>, <code>"wind"</code>, <code>"auto"</code>) selects it.
+                </li>
+                <li>An object with several items, e.g. <code>{"switch": true, "setpointTemperature": 22, "fanSpeed": 2}</code>.</li>
+                <li>A single value together with <code>msg.topic</code> set to the item name.</li>
+            </ul>
+        </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd>Item to write when the payload is a single value, e.g. <code>fanSpeed</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>setpointTemperatureFeedback</code>.</dd>
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Item value.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure: <code>°C</code>, <code>%</code> or <code>ms</code>.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Writable (feedback)</th>
+            <th>When</th>
+        </tr>
+        <tr>
+            <td>switch (switchFeedback)</td>
+            <td>conditioner and fancoil; the other types when <i>powerable</i></td>
+        </tr>
+        <tr>
+            <td>setpointTemperature (setpointTemperatureFeedback), 5-35 °C</td>
+            <td>conditioner and fancoil</td>
+        </tr>
+        <tr>
+            <td>thermoProfile (thermoProfileFeedback)</td>
+            <td>conditioner and fancoil with the profiles enabled</td>
+        </tr>
+        <tr>
+            <td>thermoMode (thermoModeFeedback)</td>
+            <td>conditioner and fancoil with the modes enabled; only the modes enabled in the app</td>
+        </tr>
+        <tr>
+            <td>overrideRestore (<code>true</code>)</td>
+            <td>conditioner and fancoil</td>
+        </tr>
+        <tr>
+            <td>setpointHumidity (setpointHumidityFeedback), 0-100 %</td>
+            <td>humidity control enabled</td>
+        </tr>
+        <tr>
+            <td>fanSpeed (fanSpeedFeedback, 1 to the number of speeds), fanAuto, fanEco, fanStrong, fanDirection (fixed, all, vertical, horizontal)</td>
+            <td>fan management enabled (eco, strong and direction when enabled too; no auto and direction on fans)</td>
+        </tr>
+        <tr>
+            <td>supplyFanSpeed, returnFanSpeed (and feedback), 0-100 %</td>
+            <td>supply / return fan management enabled</td>
+        </tr>
+    </table>
+    <p>
+        Read only: <code>roomTemperature</code>, <code>thermoStatus</code> (off, idle, heat, cool, dry, fan, inhibit, standby),
+        <code>overrideFeedback</code>, <code>overrideTime</code> (ms), <code>overrideTimeAt</code> and <code>chronoSetpoint</code> on conditioners and fancoils;
+        <code>roomHumidity</code>, <code>humidityStatus</code>; <code>deliveryTemperature</code>, <code>returnTemperature</code>,
+        <code>acsTemperature</code> and <code>pressureValue</code> on boilers, chillers and heat pumps; <code>faultSignal</code>. Each one
+        when enabled in the app.
+    </p>
+
+    <h3>Details</h3>
+    <p>
+        With <i>Feedback only</i> the node emits the state confirmed by the hvac (the <code>...Feedback</code> items). With
+        <i>Feedback and commands</i> it also emits the commands sent by the app or by other nodes.
+    </p>
+    <p>
+        The headunit applies the temperature and the humidity only while the hvac is on. Changing the temperature outside the
+        <i>manual</i> profile starts an override, restored after <code>overrideTime</code> or with <code>overrideRestore</code>. The
+        override time, the profile temperatures and the chrono schedule are configured in the app.
+    </p>
+</script>

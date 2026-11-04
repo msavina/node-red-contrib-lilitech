@@ -246,6 +246,32 @@ A program can be commanded only while the controller is started. Programs, zones
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`play` / `stop`), `programRunning`, `programStartAt` (next scheduled start, ISO date), `programsRun` (object with `windy`, `rainy`, `override` and `programs`: `programId`, `name`, `status` `play`/`pause`/`stop`, `lastRun`, `totalDuration` in ms, `zones`...), `windy`, `rainy` and `override` (seasonal adjustment, %, with `msg.unit`). `programsRun` is emitted only when it changes. `command` and `programsCmd` are emitted only with **Feedback and commands**.
 
+### hvac
+
+Controls conditioners, fancoils, boilers, chillers, heat pumps, dehumidifiers, air purifiers, fans and vmc, and emits their state. The node offers only the items enabled on the hvac in the app.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch the hvac |
+| `payload: 22` | set the temperature of a conditioner or fancoil (5-35 °C, step 0.5) or the humidity of a dehumidifier (%) |
+| `payload: "comfort"` / `"heat"` | select a profile (comfort, economy, protection, standby, manual, chrono) or a mode (heat, cool, dry, fan, wind, auto) of a conditioner or fancoil |
+| `payload: { "switch": true, "setpointTemperature": 22, "fanSpeed": 2 }` | write several items at once |
+| `topic: "fanSpeed"`, `payload: 2` | write a single item |
+
+| Writable (feedback) | When |
+|---|---|
+| switch (switchFeedback) | conditioner and fancoil; the other types when *powerable* |
+| setpointTemperature, thermoProfile, thermoMode (and their feedback), overrideRestore (`true`) | conditioner and fancoil, profiles and modes when enabled |
+| setpointHumidity (setpointHumidityFeedback), 0-100 % | humidity control enabled |
+| fanSpeed (1 to the number of speeds), fanAuto, fanEco, fanStrong, fanDirection (`fixed`, `all`, `vertical`, `horizontal`), with feedback | fan management enabled (no auto and direction on fans) |
+| supplyFanSpeed, returnFanSpeed (and feedback), 0-100 % | supply / return fan management enabled |
+
+The headunit applies temperature and humidity only while the hvac is on. Changing the temperature outside the *manual* profile starts an override, restored after `overrideTime` or with `overrideRestore`. Override time, profile temperatures and the chrono schedule are configured in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (`°C`, `%`, `ms`), `msg.origin` and `msg.device`. Besides the feedbacks: `roomTemperature`, `thermoStatus` (`off`, `idle`, `heat`, `cool`, `dry`, `fan`, `inhibit`, `standby`), `overrideFeedback`, `overrideTime` (ms), `overrideTimeAt`, `chronoSetpoint`, `roomHumidity`, `humidityStatus`, `deliveryTemperature` / `returnTemperature` / `acsTemperature` / `pressureValue` on boilers, chillers and heat pumps, and `faultSignal`, each when enabled in the app. The commands are emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

@@ -1,0 +1,107 @@
+[
+    {
+        "id": "d4e0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the hvac node and select your conditioner or fancoil",
+        "info": "Inject nodes switch the hvac, set the temperature, select the comfort profile and the heat mode and set the fan speed; the debug node shows the state reported by the headunit. Profiles, modes and fan work only when enabled on the hvac in the app.",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "d4e0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [["d4e0d0000000007"]]
+    },
+    {
+        "id": "d4e0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "22 °C",
+        "props": [{ "p": "payload" }],
+        "payload": "22",
+        "payloadType": "num",
+        "x": 130,
+        "y": 160,
+        "wires": [["d4e0d0000000007"]]
+    },
+    {
+        "id": "d4e0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "comfort",
+        "props": [{ "p": "payload" }],
+        "payload": "comfort",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["d4e0d0000000007"]]
+    },
+    {
+        "id": "d4e0d0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "heat",
+        "props": [{ "p": "payload" }],
+        "payload": "heat",
+        "payloadType": "str",
+        "x": 130,
+        "y": 240,
+        "wires": [["d4e0d0000000007"]]
+    },
+    {
+        "id": "d4e0d0000000006",
+        "type": "inject",
+        "z": "",
+        "name": "fan speed 2",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "fanSpeed",
+        "payload": "2",
+        "payloadType": "num",
+        "x": 140,
+        "y": 280,
+        "wires": [["d4e0d0000000007"]]
+    },
+    {
+        "id": "d4e0d0000000007",
+        "type": "lilitech-hvac",
+        "z": "",
+        "name": "",
+        "headunit": "d4e0d0000000009",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 350,
+        "y": 200,
+        "wires": [["d4e0d0000000008"]]
+    },
+    {
+        "id": "d4e0d0000000008",
+        "type": "debug",
+        "z": "",
+        "name": "hvac state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 540,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "d4e0d0000000009",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
