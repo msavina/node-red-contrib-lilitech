@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.1
+
+- `irrigation`: a program command without `msg.program` (e.g. `topic: "programsCmd"`, `payload: "play"`) uses the program of the irrigation when it has only one; with several programs the error lists their ids and names.
+
 ## 0.12.0
 
 - New `irrigation` node: starts and stops the irrigation controller (`command`: `play` / `stop`) and plays, pauses and stops its programs by id or name (`msg.program`, or `{ "programId": 1, "cmd": "play" }`).

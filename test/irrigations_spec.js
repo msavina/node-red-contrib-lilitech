@@ -44,7 +44,14 @@ describe('irrigations family', function () {
         assert.throws(() => irrigations.parseInput({ program: 7, payload: 'play' }, running), /Program 7 not found/);
         assert.throws(() => irrigations.parseInput({ program: 'Lawn', payload: 'play' }, running), /Program "Lawn" not found/);
         assert.throws(() => irrigations.parseInput({ program: 1, payload: 'skip' }, running), /Invalid program command/);
-        assert.throws(() => irrigations.parseInput({ topic: 'programsCmd', payload: 'play' }, running), /Missing program/);
+        assert.throws(() => irrigations.parseInput({ topic: 'programsCmd', payload: 'play' }, running), /Missing program.*1 "Garden", 2 "Hedge"/);
+    });
+
+    it('uses the only program when none is given', function () {
+        const single = { ...running, programsRun: JSON.stringify({ programs: [{ programId: 3, name: 'Lawn', status: 'stop' }] }) };
+        assert.deepStrictEqual(irrigations.parseInput({ topic: 'programsCmd', payload: 'play' }, single), {
+            programsCmd: '{"programId":3,"cmd":"play"}'
+        });
     });
 
     it('rejects unknown types, read only items and points out an unknown topic', function () {

@@ -240,6 +240,7 @@ Starts and stops the irrigation controller and its programs, and emits their sta
 | `payload: "play"` / `"stop"` (or `true` / `false`, `"toggle"`) | start or stop the controller: when stopped no program runs, not even the scheduled ones |
 | `program: "Garden"` (or the id), `payload: "play"` / `"pause"` / `"stop"` / `"toggle"` | command a program |
 | `payload: { "programId": 1, "cmd": "play" }` | the same, as an object (`name` instead of `programId` works too) |
+| `topic: "programsCmd"`, `payload: "play"` | command the program of an irrigation that has only one |
 
 A program can be commanded only while the controller is started. Programs, zones and durations are configured in the app.
 
