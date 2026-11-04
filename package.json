@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-lilitech",
-    "version": "0.9.0",
+    "version": "0.10.0",
     "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
     "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
     "license": "MIT",
@@ -28,7 +28,10 @@
         "ev charger",
         "access control",
         "rfid",
-        "keypad"
+        "keypad",
+        "appliance",
+        "washing machine",
+        "dishwasher"
     ],
     "repository": {
         "type": "git",
@@ -58,7 +61,8 @@
             "lilitech-automation": "nodes/lilitech-automation.js",
             "lilitech-notifier": "nodes/lilitech-notifier.js",
             "lilitech-charger": "nodes/lilitech-charger.js",
-            "lilitech-access-control": "nodes/lilitech-access-control.js"
+            "lilitech-access-control": "nodes/lilitech-access-control.js",
+            "lilitech-appliance": "nodes/lilitech-appliance.js"
         }
     },
     "engines": {

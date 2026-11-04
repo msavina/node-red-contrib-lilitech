@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+- New `appliance` node: switches dishwashers, washing machines, ovens, water heaters and the other appliances (`true` / `false` / `"toggle"`).
+- Emits `switchFeedback`, `overload` / `economy` / `green` and, when enabled in the app, the measures (power, energy, current, voltage) and `faultSignal`, with `msg.unit`.
+- Requires a headunit that answers the device list request for `appliances`.
+
 ## 0.9.0
 
 - New `access control` node: emits every access attempt on badge readers and keypads (`access`: `granted` / `denied`) with the recognized user (`msg.user`) and the reason of a denial (`msg.reason`), plus `exclusion` and `tamper` when enabled in the app; the PIN and the badge are never emitted.

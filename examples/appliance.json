@@ -1,0 +1,82 @@
+[
+    {
+        "id": "a7b0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the appliance node and select your appliance",
+        "info": "Inject nodes switch the appliance on and off or toggle it; the debug node shows the state reported by the headunit (feedback, measures, energy management).",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a7b0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "on",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [["a7b0d0000000005"]]
+    },
+    {
+        "id": "a7b0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "off",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 160,
+        "wires": [["a7b0d0000000005"]]
+    },
+    {
+        "id": "a7b0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["a7b0d0000000005"]]
+    },
+    {
+        "id": "a7b0d0000000005",
+        "type": "lilitech-appliance",
+        "z": "",
+        "name": "",
+        "headunit": "a7b0d0000000007",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 330,
+        "y": 160,
+        "wires": [["a7b0d0000000006"]]
+    },
+    {
+        "id": "a7b0d0000000006",
+        "type": "debug",
+        "z": "",
+        "name": "appliance state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 540,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "a7b0d0000000007",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

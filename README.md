@@ -208,6 +208,14 @@ The PIN and the badge read by the reader are never emitted.
 
 **Input** (only when *excludible* is enabled): `payload: true` excludes the reader until it is enabled again and `false` enables it.
 
+### appliance
+
+Controls dishwashers, washing machines, dryers, ovens, water heaters, fridges and the other appliances, and emits their state.
+
+**Input**: `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` switches the appliance (or `{ "switch": true }`).
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`: `switchFeedback`, `overload`, `economy` and `green` (energy management) and, when enabled in the app, power (W), energy and energyRelative (Wh), current (A), voltage (V) and `faultSignal`. `switch` is emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License
