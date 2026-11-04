@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.0
+
+- New `irrigation` node: starts and stops the irrigation controller (`command`: `play` / `stop`) and plays, pauses and stops its programs by id or name (`msg.program`, or `{ "programId": 1, "cmd": "play" }`).
+- Emits `status`, `programRunning`, `programStartAt`, `programsRun` (decoded into an object), `windy`, `rainy` and `override` (%).
+- Families can list items emitted only when their value changes: the headunit sends the programs every minute even when nothing changed.
+- Requires a headunit that answers the device list request for `irrigations`.
+
 ## 0.11.0
 
 - New `energy management` node: starts and stops the load control (`command`: `play` / `stop`, also `true` / `false` and `"toggle"`).

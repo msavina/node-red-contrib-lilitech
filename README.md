@@ -229,6 +229,22 @@ Starts and stops the load control and emits its powers, energy flows and badges.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (powers), `msg.origin` and `msg.device`. `overloadBadge` is `detach` while the loads are detached, `attach` while they are reattached, `idle` otherwise; `houseConsumption` is 0 (none), 1 (grid), 2 (green) or 3 (both); the badges are `null` when the controller is stopped or the rule is disabled. `command` is emitted only with **Feedback and commands**.
 
+### irrigation
+
+Starts and stops the irrigation controller and its programs, and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: "play"` / `"stop"` (or `true` / `false`, `"toggle"`) | start or stop the controller: when stopped no program runs, not even the scheduled ones |
+| `program: "Garden"` (or the id), `payload: "play"` / `"pause"` / `"stop"` / `"toggle"` | command a program |
+| `payload: { "programId": 1, "cmd": "play" }` | the same, as an object (`name` instead of `programId` works too) |
+
+A program can be commanded only while the controller is started. Programs, zones and durations are configured in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`play` / `stop`), `programRunning`, `programStartAt` (next scheduled start, ISO date), `programsRun` (object with `windy`, `rainy`, `override` and `programs`: `programId`, `name`, `status` `play`/`pause`/`stop`, `lastRun`, `totalDuration` in ms, `zones`...), `windy`, `rainy` and `override` (seasonal adjustment, %, with `msg.unit`). `programsRun` is emitted only when it changes. `command` and `programsCmd` are emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

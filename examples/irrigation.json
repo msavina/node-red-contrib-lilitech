@@ -1,0 +1,106 @@
+[
+    {
+        "id": "b1d0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the irrigation node and select your irrigation",
+        "info": "Inject nodes start and stop the controller and play, pause and stop the program named \"Garden\" (rename it to one of your programs); the debug node shows the state and the programs reported by the headunit.",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b1d0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "controller play",
+        "props": [{ "p": "payload" }],
+        "payload": "play",
+        "payloadType": "str",
+        "x": 150,
+        "y": 120,
+        "wires": [["b1d0d0000000007"]]
+    },
+    {
+        "id": "b1d0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "controller stop",
+        "props": [{ "p": "payload" }],
+        "payload": "stop",
+        "payloadType": "str",
+        "x": 150,
+        "y": 160,
+        "wires": [["b1d0d0000000007"]]
+    },
+    {
+        "id": "b1d0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "Garden play",
+        "props": [{ "p": "payload" }, { "p": "program", "v": "Garden", "vt": "str" }],
+        "payload": "play",
+        "payloadType": "str",
+        "x": 140,
+        "y": 220,
+        "wires": [["b1d0d0000000007"]]
+    },
+    {
+        "id": "b1d0d0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "Garden pause",
+        "props": [{ "p": "payload" }, { "p": "program", "v": "Garden", "vt": "str" }],
+        "payload": "pause",
+        "payloadType": "str",
+        "x": 140,
+        "y": 260,
+        "wires": [["b1d0d0000000007"]]
+    },
+    {
+        "id": "b1d0d0000000006",
+        "type": "inject",
+        "z": "",
+        "name": "Garden stop",
+        "props": [{ "p": "payload" }, { "p": "program", "v": "Garden", "vt": "str" }],
+        "payload": "stop",
+        "payloadType": "str",
+        "x": 140,
+        "y": 300,
+        "wires": [["b1d0d0000000007"]]
+    },
+    {
+        "id": "b1d0d0000000007",
+        "type": "lilitech-irrigation",
+        "z": "",
+        "name": "",
+        "headunit": "b1d0d0000000009",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 380,
+        "y": 210,
+        "wires": [["b1d0d0000000008"]]
+    },
+    {
+        "id": "b1d0d0000000008",
+        "type": "debug",
+        "z": "",
+        "name": "irrigation state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 590,
+        "y": 210,
+        "wires": []
+    },
+    {
+        "id": "b1d0d0000000009",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
