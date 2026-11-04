@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+- New `access control` node: emits every access attempt on badge readers and keypads (`access`: `granted` / `denied`) with the recognized user (`msg.user`) and the reason of a denial (`msg.reason`), plus `exclusion` and `tamper` when enabled in the app; the PIN and the badge are never emitted.
+- Excludes and enables the reader (`exclusion`) when *excludible* is enabled.
+- The headunit connection now also receives the history events of the devices.
+- Requires a headunit that answers the device list request for `access-controls`.
+
 ## 0.8.0
 
 - New `charger` node: switches simple EV chargers and drives smart chargers: start/pause (`play` / `pause`), lock/unlock and maximum charging current (`maxChargingCurrent`, 1-16 A).

@@ -194,6 +194,20 @@ A smart charger accepts one item per message.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`. Both types also emit `overload`, `economy` and `green` (energy management) and, when enabled in the app, `faultSignal`. `status` is one of `disconnected`, `ready`, `charging`, `paused`, `scheduled`, `locked`, `lockedCarConnected`, `waitingForCarDemand`, `error`... `switch`, `command` and `commandLock` are emitted only with **Feedback and commands**.
 
+### access control
+
+Emits the access attempts on badge readers and keypads. The headunit checks the PIN or the badge and runs the action configured in the app; the node reports the result:
+
+| msg.topic | msg.payload | Also |
+|---|---|---|
+| `access` | `granted` / `denied` | `msg.user` (`id`, `name`) when the user is recognized, `msg.reason` for a denial (e.g. `Pin blocked`, `User outside the allowed time window`, `Unidentified user`) |
+| `exclusion` | `true` / `false` | when *excludible* is enabled in the app |
+| `tamper` | `true` / `false` | when *tamperDetection* is enabled in the app |
+
+The PIN and the badge read by the reader are never emitted.
+
+**Input** (only when *excludible* is enabled): `payload: true` excludes the reader until it is enabled again and `false` enables it.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

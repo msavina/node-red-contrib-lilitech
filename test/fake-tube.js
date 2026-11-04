@@ -46,6 +46,7 @@ async function startFakeDevices(url, devices) {
     return {
         received,
         emitUpdate: (payload, familyId = 'lights') => emit('DATABASE_UPDATE_DEVICES', { unitId: 'unit-1', familyId, ...payload }),
+        emitHistory: (payload) => emit('DATABASE_HISTORY_UNIT_EVENT', { level: 'info', sourceKind: 'device', unitId: '<unit-id>', ...payload }),
         close: () => socket.disconnect()
     };
 }

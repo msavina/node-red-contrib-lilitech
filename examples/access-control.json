@@ -1,0 +1,100 @@
+[
+    {
+        "id": "d1b0e0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the access control node and select your badge reader or keypad",
+        "info": "The switch node splits granted and denied accesses; the debug nodes show the user and the reason of a denial. The inject nodes exclude the reader and enable it again (they need the excludible feature enabled in the app).",
+        "x": 290,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "d1b0e0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "exclude",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 140,
+        "wires": [["d1b0e0000000004"]]
+    },
+    {
+        "id": "d1b0e0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "enable",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 120,
+        "y": 180,
+        "wires": [["d1b0e0000000004"]]
+    },
+    {
+        "id": "d1b0e0000000004",
+        "type": "lilitech-access-control",
+        "z": "",
+        "name": "",
+        "headunit": "d1b0e0000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "initialState": true,
+        "x": 360,
+        "y": 160,
+        "wires": [["d1b0e0000000005"]]
+    },
+    {
+        "id": "d1b0e0000000005",
+        "type": "switch",
+        "z": "",
+        "name": "access",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            { "t": "eq", "v": "granted", "vt": "str" },
+            { "t": "eq", "v": "denied", "vt": "str" }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 550,
+        "y": 160,
+        "wires": [["d1b0e0000000006"], ["d1b0e0000000007"]]
+    },
+    {
+        "id": "d1b0e0000000006",
+        "type": "debug",
+        "z": "",
+        "name": "granted",
+        "active": true,
+        "tosidebar": true,
+        "complete": "user",
+        "targetType": "msg",
+        "x": 730,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "d1b0e0000000007",
+        "type": "debug",
+        "z": "",
+        "name": "denied",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 730,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "d1b0e0000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
