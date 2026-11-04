@@ -323,6 +323,22 @@ Emits the state and the alarms of a security sensor (contacts, volumetric, barri
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `input` (`true` = open / activated), `trigger` (`true` each time the sensor triggers its armed area), `armed`, `exclusion`, `testing`, `maintenance` and, when enabled in the app, `tamper`, `sensorLoss`, `lowBattery`, `faultSignal`, `masked`, `weak`, `petDetected` and `maxAlarmsReached`.
 
+### presence simulator
+
+Starts and stops a presence simulator and its programs, and emits its state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: "play"` / `"stop"` (`true` / `false`, `"toggle"`) | start / stop the simulation |
+| `program: "Evening"` (or the program id), `payload: "play"` / `"stop"` / `"toggle"` | command that program (the simulation must be started) |
+| `payload: {"programId": 1, "cmd": "play"}` | the same, as the app sends it |
+
+`msg.program` can be omitted (with `topic: "programsCmd"`) when the simulator has only one program. Programs and simulated devices are configured in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`play` / `stop`), `programRunning`, `programStartAt` (next scheduled start) and `programsRun` (the programs with their status, decoded as an object and emitted only when it changes). `command` and `programsCmd` are emitted only with **Feedback and commands**. The devices moved by the simulation emit `simulated` on their nodes.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

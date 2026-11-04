@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.0
+
+- New `presence simulator` node: starts and stops the simulation (`command` play/stop/toggle) and its programs (`programsCmd` like the app, program by id or name with `msg.program`; only play/stop, the headunit does not pause simulation programs).
+- Emits `status`, `programRunning`, `programStartAt` and `programsRun` (decoded, only when it changes); the node status shows the running programs or the next start.
+- Requires a headunit that answers the device list request for `simulators`.
+
 ## 0.16.0
 
 - New `security sensor` node: emits `input`, `trigger` (every alarm), `armed`, `exclusion`, `testing`, `maintenance` and the anomalies enabled in the app (tamper, sensor loss, low battery, fault, masked, weak, pet detected, max alarms reached), shown in the node status like the badges of the app card.
