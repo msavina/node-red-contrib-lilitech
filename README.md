@@ -216,6 +216,19 @@ Controls dishwashers, washing machines, dryers, ovens, water heaters, fridges an
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (when it has one), `msg.origin` and `msg.device`: `switchFeedback`, `overload`, `economy` and `green` (energy management) and, when enabled in the app, power (W), energy and energyRelative (Wh), current (A), voltage (V) and `faultSignal`. `switch` is emitted only with **Feedback and commands**.
 
+### energy management
+
+Starts and stops the load control and emits its powers, energy flows and badges.
+
+**Input**: `payload: "play"` / `"stop"` (or `true` / `false`, `"toggle"`) starts or stops the controller. The rules (contracted power, margin, off-peak bands, green threshold) are configured in the app.
+
+| Controller type | Writable items | Read only |
+|---|---|---|
+| gridControl | command (`play`, `stop`) | status, gridPower (W), overloadBadge, economyBadge, gridProduction, gridToHouse |
+| greenControl | command (`play`, `stop`) | status, gridPower, greenPower and housePower (W), overloadBadge, economyBadge, greenBadge, gridProduction, greenProduction, houseConsumption, gridToHouse, greenToHouse, greenToGrid |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (powers), `msg.origin` and `msg.device`. `overloadBadge` is `detach` while the loads are detached, `attach` while they are reattached, `idle` otherwise; `houseConsumption` is 0 (none), 1 (grid), 2 (green) or 3 (both); the badges are `null` when the controller is stopped or the rule is disabled. `command` is emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

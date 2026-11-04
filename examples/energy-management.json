@@ -1,0 +1,70 @@
+[
+    {
+        "id": "e3c0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the energy management node and select your controller",
+        "info": "Inject nodes start and stop the load control; the debug node shows the powers, the energy flows and the badges reported by the headunit.",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "e3c0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "play",
+        "props": [{ "p": "payload" }],
+        "payload": "play",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [["e3c0d0000000004"]]
+    },
+    {
+        "id": "e3c0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "stop",
+        "props": [{ "p": "payload" }],
+        "payload": "stop",
+        "payloadType": "str",
+        "x": 130,
+        "y": 160,
+        "wires": [["e3c0d0000000004"]]
+    },
+    {
+        "id": "e3c0d0000000004",
+        "type": "lilitech-energy-management",
+        "z": "",
+        "name": "",
+        "headunit": "e3c0d0000000006",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 350,
+        "y": 140,
+        "wires": [["e3c0d0000000005"]]
+    },
+    {
+        "id": "e3c0d0000000005",
+        "type": "debug",
+        "z": "",
+        "name": "energy management state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 600,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "e3c0d0000000006",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

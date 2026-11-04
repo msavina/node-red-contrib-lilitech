@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+- New `energy management` node: starts and stops the load control (`command`: `play` / `stop`, also `true` / `false` and `"toggle"`).
+- Emits `status`, the powers (`gridPower`, and `greenPower` / `housePower` on green control, in W with `msg.unit`), the badges `overloadBadge` / `economyBadge` / `greenBadge` and the energy flows (`gridProduction`, `greenProduction`, `houseConsumption`, `gridToHouse`, `greenToHouse`, `greenToGrid`).
+- Requires a headunit that answers the device list request for `energy-managements`.
+
 ## 0.10.0
 
 - New `appliance` node: switches dishwashers, washing machines, ovens, water heaters and the other appliances (`true` / `false` / `"toggle"`).

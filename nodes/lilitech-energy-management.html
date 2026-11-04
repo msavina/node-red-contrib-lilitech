@@ -1,0 +1,145 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-energy-management', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-bolt',
+        paletteLabel: 'energy management',
+        label: function () {
+            return this.name || this.deviceName || 'energy management';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'energy-managements');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-energy-management">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-bolt"></i> Controller</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload energy managements"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="feedback">Feedback only (actual state)</option>
+            <option value="all">Feedback and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-energy-management">
+    <p>
+        Starts and stops a Lilitech energy management controller (load control on the grid, or on grid and green production) and emits
+        its powers, energy flows and badges.
+    </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean | string | object</span></dt>
+        <dd>
+            <ul>
+                <li>
+                    <code>"play"</code> / <code>"stop"</code> (<code>true</code> / <code>false</code>, <code>"toggle"</code>) starts or stops the
+                    controller.
+                </li>
+                <li>An object with the item, e.g. <code>{"command": "play"}</code>.</li>
+            </ul>
+        </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd>Item to write when the payload is a single value: <code>command</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>gridPower</code>.</dd>
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Item value.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure of the powers: <code>W</code>.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Writable</th>
+            <th>Read only</th>
+        </tr>
+        <tr>
+            <td>gridControl</td>
+            <td>command (<code>play</code>, <code>stop</code>)</td>
+            <td>status, gridPower (W), overloadBadge, economyBadge, gridProduction, gridToHouse</td>
+        </tr>
+        <tr>
+            <td>greenControl</td>
+            <td>command (<code>play</code>, <code>stop</code>)</td>
+            <td>
+                status, gridPower, greenPower and housePower (W), overloadBadge, economyBadge, greenBadge, gridProduction, greenProduction,
+                houseConsumption, gridToHouse, greenToHouse, greenToGrid
+            </td>
+        </tr>
+    </table>
+    <ul>
+        <li><code>status</code>: <code>play</code> or <code>stop</code>.</li>
+        <li>
+            <code>overloadBadge</code>: <code>detach</code> while the loads are detached for overload, <code>attach</code> while they are
+            reattached, <code>idle</code> otherwise.
+        </li>
+        <li><code>economyBadge</code> / <code>greenBadge</code>: inside an off-peak band / enough green production, when the rule is enabled in the app.</li>
+        <li><code>houseConsumption</code>: 0 none, 1 from the grid, 2 from green, 3 from both.</li>
+        <li>The badges are <code>null</code> when the controller is stopped or the rule is disabled.</li>
+    </ul>
+
+    <h3>Details</h3>
+    <p>
+        With <i>Feedback only</i> the node emits the state confirmed by the controller (<code>status</code>). With
+        <i>Feedback and commands</i> it also emits <code>command</code> sent by the app or by other nodes.
+    </p>
+    <p>The rules (contracted power, margin, off-peak bands, green threshold) are configured in the app.</p>
+</script>
