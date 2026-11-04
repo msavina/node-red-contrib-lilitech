@@ -1,0 +1,96 @@
+[
+    {
+        "id": "b8f0c0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the notifier node and select your siren, buzzer, flash or status led",
+        "info": "Inject nodes switch the notifier on and off, start the test and set the maintenance; the debug node shows the state reported by the headunit. The test needs the testable feature enabled in the app.",
+        "x": 300,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b8f0c0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "on",
+        "props": [{ "p": "payload" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 120,
+        "wires": [["b8f0c0000000006"]]
+    },
+    {
+        "id": "b8f0c0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "off",
+        "props": [{ "p": "payload" }],
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 130,
+        "y": 160,
+        "wires": [["b8f0c0000000006"]]
+    },
+    {
+        "id": "b8f0c0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "test 5 s (testable)",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "test",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 200,
+        "wires": [["b8f0c0000000006"]]
+    },
+    {
+        "id": "b8f0c0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "maintenance on",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "maintenance",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 240,
+        "wires": [["b8f0c0000000006"]]
+    },
+    {
+        "id": "b8f0c0000000006",
+        "type": "lilitech-notifier",
+        "z": "",
+        "name": "",
+        "headunit": "b8f0c0000000008",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 430,
+        "y": 180,
+        "wires": [["b8f0c0000000007"]]
+    },
+    {
+        "id": "b8f0c0000000007",
+        "type": "debug",
+        "z": "",
+        "name": "notifier state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 640,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b8f0c0000000008",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

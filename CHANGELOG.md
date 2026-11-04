@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+- New `notifier` node: switches sirens, buzzers, flashes and status leds (`true` / `false` / `"toggle"`), starts the test (when *testable*) and sets the maintenance.
+- Emits `switchFeedback`, `test`, `maintenance` and, when enabled in the app, `tamperSignal` and `lowBattery`.
+- Requires a headunit that answers the device list request for `notifiers`.
+
 ## 0.6.0
 
 - New `automation` node: opens, closes and stops shutters, sun blinds, awnings, curtains, gates, barriers, doors and windows, locks/unlocks front doors with a smart lock and sets the position (`absolutePosition`) and the slats (`absolutePositionFoil`), following the features enabled in the app.

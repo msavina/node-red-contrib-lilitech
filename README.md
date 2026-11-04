@@ -157,6 +157,21 @@ The commands follow the features enabled on the automation in the app:
 
 Commands sent from Node-RED do not ask for the PIN, even when the automation is secured in the app.
 
+### notifier
+
+Controls sirens, buzzers, flashes and status leds, and emits their state.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch the notifier on or off |
+| `topic: "test"`, `payload: true` | turn the notifier on for 5 seconds (only when *testable*) |
+| `topic: "maintenance"`, `payload: true` / `false` | exclude the notifier from the security areas (the alarms no longer turn it on) |
+| `payload: { "switch": false, "maintenance": true }` | write several items at once |
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `switchFeedback`, `test`, `maintenance` and, when enabled on the notifier in the app, `tamperSignal` and `lowBattery`. `switch` is emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License
