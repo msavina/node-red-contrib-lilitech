@@ -339,6 +339,21 @@ Starts and stops a presence simulator and its programs, and emits its state.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`play` / `stop`), `programRunning`, `programStartAt` (next scheduled start) and `programsRun` (the programs with their status, decoded as an object and emitted only when it changes). `command` and `programsCmd` are emitted only with **Feedback and commands**. The devices moved by the simulation emit `simulated` on their nodes.
 
+### system
+
+Read only: emits the values of the clock or of the weather, with `msg.topic` = item name, `msg.payload` = value and `msg.unit` (when it has one). The headunit sends them every minute: the node emits an item only when it changes.
+
+| System type | Items |
+|---|---|
+| clock | `sunrise` / `sunset` (`true` at sunrise / sunset, `false` a minute later), `night` (`true` from sunset to sunrise), `sunriseTime`, `sunsetTime` (e.g. `"07:05"`) |
+| weather | `weather` (`clear`, `clouds`, `drizzle`, `fog`, `rain`, `thunderstorm`, `snow`, ...), temperatureValue / temperatureMinValue / temperatureMaxValue / temperaturePerceived (°C), humidityValue (%), pressureValue (hPa), windSpeed / windGustsValue (km/h), windDirection (°), rainAmountHour (mm/h), `rainStatus`, `uvIndex`, `airPollutionIndex` (1 = good ... 5 = very poor), `weatherAlerts`, `weatherAlertsEvent` (array of alert names), `city`, `sunriseTime`, `sunsetTime` |
+
+Options:
+- **Send the current day and time every minute** (clock): `currentDayTime` (`{"day": 0, "time": "09:16"}`, day 0 = Monday like the app scenarios), `currentDay` (0 = Sunday), `currentHour`, `currentMinute`.
+- **Send the daily and hourly forecast** (weather): `forecastDaily` (8 days with `weather`, `temperatureDay`, `temperatureMin`, `temperatureMax`, `pop`) and `forecastHourly` (24 hours with `weather`, `temperature`).
+
+The clock uses the time zone and the position of the headunit set in the app; the weather comes from the OpenWeather technology.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

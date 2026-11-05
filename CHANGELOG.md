@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0
+
+- New `system` node (read only): clock (`sunrise`, `sunset`, `night`, sunrise/sunset times, optionally the current day and time every minute) and weather (conditions, temperatures, humidity, pressure, wind, rain, UV, air pollution, alerts, optionally the daily and hourly forecast). Items are emitted only when they change, although the headunit resends them every minute.
+
+## 0.17.1
+
+- The nodes are listed in alphabetical order in the palette.
+
 ## 0.17.0
 
 - New `presence simulator` node: starts and stops the simulation (`command` play/stop/toggle) and its programs (`programsCmd` like the app, program by id or name with `msg.program`; only play/stop, the headunit does not pause simulation programs).
