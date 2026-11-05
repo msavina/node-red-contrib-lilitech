@@ -1,0 +1,107 @@
+[
+    {
+        "id": "f7a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the thermostat node and select your thermostat",
+        "info": "Inject nodes switch the thermostat, set the temperature, select the comfort profile and the heat mode and restore the program after an override; the debug node shows the state reported by the headunit. Switch, profiles and modes work only when enabled on the thermostat in the app (modes only on heat/cool thermostats).",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f7a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "toggle",
+        "props": [{ "p": "payload" }],
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [["f7a0d0000000007"]]
+    },
+    {
+        "id": "f7a0d0000000003",
+        "type": "inject",
+        "z": "",
+        "name": "22 °C",
+        "props": [{ "p": "payload" }],
+        "payload": "22",
+        "payloadType": "num",
+        "x": 130,
+        "y": 160,
+        "wires": [["f7a0d0000000007"]]
+    },
+    {
+        "id": "f7a0d0000000004",
+        "type": "inject",
+        "z": "",
+        "name": "comfort",
+        "props": [{ "p": "payload" }],
+        "payload": "comfort",
+        "payloadType": "str",
+        "x": 130,
+        "y": 200,
+        "wires": [["f7a0d0000000007"]]
+    },
+    {
+        "id": "f7a0d0000000005",
+        "type": "inject",
+        "z": "",
+        "name": "heat",
+        "props": [{ "p": "payload" }],
+        "payload": "heat",
+        "payloadType": "str",
+        "x": 130,
+        "y": 240,
+        "wires": [["f7a0d0000000007"]]
+    },
+    {
+        "id": "f7a0d0000000006",
+        "type": "inject",
+        "z": "",
+        "name": "restore program",
+        "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+        "topic": "overrideRestore",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 280,
+        "wires": [["f7a0d0000000007"]]
+    },
+    {
+        "id": "f7a0d0000000007",
+        "type": "lilitech-thermostat",
+        "z": "",
+        "name": "",
+        "headunit": "f7a0d0000000009",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "outputMode": "feedback",
+        "initialState": true,
+        "x": 350,
+        "y": 200,
+        "wires": [["f7a0d0000000008"]]
+    },
+    {
+        "id": "f7a0d0000000008",
+        "type": "debug",
+        "z": "",
+        "name": "thermostat state",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 540,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f7a0d0000000009",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]

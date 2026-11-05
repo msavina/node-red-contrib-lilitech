@@ -1,0 +1,161 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-thermostat', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-thermometer-three-quarters',
+        paletteLabel: 'thermostat',
+        label: function () {
+            return this.name || this.deviceName || 'thermostat';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'thermostats');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-thermostat">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-thermometer-three-quarters"></i> Thermostat</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload thermostats"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="feedback">Feedback only (actual state)</option>
+            <option value="all">Feedback and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-thermostat">
+    <p>
+        Controls a Lilitech thermostat (heat, cool or heat/cool, also integrated "smart" thermostats) and emits its state changes. The
+        node offers only the items enabled on the thermostat in the app.
+    </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean | number | string | object</span></dt>
+        <dd>
+            <ul>
+                <li><code>true</code> / <code>false</code>, <code>"on"</code> / <code>"off"</code> or <code>"toggle"</code> switches it (only when <i>powerable</i>).</li>
+                <li>
+                    A number sets the temperature (5-35 °C, step 0.5; with the setpoint block enabled in the app, the base setpoint ± 3 °C). Values
+                    out of range are limited.
+                </li>
+                <li>
+                    A profile name (<code>"comfort"</code>, <code>"economy"</code>, <code>"protection"</code>, <code>"standby"</code>,
+                    <code>"manual"</code>, <code>"chrono"</code>) selects it, when the profiles are enabled.
+                </li>
+                <li>
+                    On heat/cool thermostats a mode name (<code>"heat"</code>, <code>"cool"</code> and, when enabled in the app, <code>"auto"</code>,
+                    <code>"dry"</code>, <code>"fan"</code>) selects it.
+                </li>
+                <li>An object with several items, e.g. <code>{"switch": true, "setpointTemperature": 21.5}</code>.</li>
+                <li>A single value together with <code>msg.topic</code> set to the item name.</li>
+            </ul>
+        </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd>Item to write when the payload is a single value, e.g. <code>overrideRestore</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>Item name, e.g. <code>setpointTemperatureFeedback</code>.</dd>
+        <dt>payload <span class="property-type">any</span></dt>
+        <dd>Item value.</dd>
+        <dt class="optional">unit <span class="property-type">string</span></dt>
+        <dd>Unit of measure: <code>°C</code>, <code>%</code> or <code>ms</code>.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Items</h3>
+    <table>
+        <tr>
+            <th>Writable (feedback)</th>
+            <th>When</th>
+        </tr>
+        <tr>
+            <td>switch (switchFeedback)</td>
+            <td><i>powerable</i> enabled; switchFeedback is emitted always</td>
+        </tr>
+        <tr>
+            <td>setpointTemperature (setpointTemperatureFeedback)</td>
+            <td>always</td>
+        </tr>
+        <tr>
+            <td>thermoProfile (thermoProfileFeedback)</td>
+            <td>profiles enabled</td>
+        </tr>
+        <tr>
+            <td>thermoMode (thermoModeFeedback)</td>
+            <td>heat/cool thermostats; only the modes enabled in the app</td>
+        </tr>
+        <tr>
+            <td>overrideRestore (<code>true</code>)</td>
+            <td>always</td>
+        </tr>
+    </table>
+    <p>
+        Read only: <code>roomTemperature</code>, <code>thermoStatus</code> (off, idle, heat, cool, auto, dry, fan, inhibit, standby),
+        <code>overrideFeedback</code>, <code>overrideTime</code> (ms), <code>overrideTimeAt</code>, the valves (<code>systemPrimaryValve</code>, or
+        <code>systemPrimaryValveHeat</code> / <code>systemPrimaryValveCool</code> on 4 pipes, and the same for the secondary system when enabled),
+        <code>chronoSetpoint</code> with the profiles, <code>roomHumidity</code> and <code>faultSignal</code> when enabled in the app.
+    </p>
+
+    <h3>Details</h3>
+    <p>
+        With <i>Feedback only</i> the node emits the state confirmed by the thermostat (the <code>...Feedback</code> items). With
+        <i>Feedback and commands</i> it also emits the commands sent by the app or by other nodes.
+    </p>
+    <p>
+        The headunit applies the temperature only while the thermostat is on. Changing the temperature outside the <i>manual</i> profile
+        starts an override, restored after <code>overrideTime</code> or with <code>overrideRestore</code>. The override time, the profile
+        temperatures, the chrono schedule and the fan are configured in the app.
+    </p>
+</script>

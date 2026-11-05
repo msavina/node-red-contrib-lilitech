@@ -354,6 +354,24 @@ Options:
 
 The clock uses the time zone and the position of the headunit set in the app; the weather comes from the OpenWeather technology.
 
+### thermostat
+
+Controls heat, cool and heat/cool thermostats (also the integrated "smart" ones) and emits their state. The node offers only the items enabled on the thermostat in the app.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `false` / `"on"` / `"off"` / `"toggle"` | switch the thermostat (only when *powerable*) |
+| `payload: 21.5` | set the temperature (5-35 °C, step 0.5; with the setpoint block enabled in the app, the base setpoint ± 3 °C) |
+| `payload: "comfort"` / `"heat"` | select a profile (comfort, economy, protection, standby, manual, chrono) or, on heat/cool thermostats, a mode (heat, cool and, when enabled, auto, dry, fan) |
+| `topic: "overrideRestore"`, `payload: true` | end the override and go back to the profile temperature |
+| `payload: { "switch": true, "setpointTemperature": 21.5 }` | write several items at once |
+
+The headunit applies the temperature only while the thermostat is on. Changing the temperature outside the *manual* profile starts an override, restored after `overrideTime` or with `overrideRestore`. Override time, profile temperatures, chrono schedule and fan are configured in the app.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (`°C`, `%`, `ms`), `msg.origin` and `msg.device`: `switchFeedback`, `setpointTemperatureFeedback`, `thermoProfileFeedback`, `thermoModeFeedback`, `roomTemperature`, `thermoStatus` (`off`, `idle`, `heat`, `cool`, `auto`, `dry`, `fan`, `inhibit`, `standby`), `overrideFeedback`, `overrideTime` (ms), `overrideTimeAt`, the valves (`systemPrimaryValve`, or `systemPrimaryValveHeat` / `systemPrimaryValveCool` on 4 pipes, and the same for the secondary system), `chronoSetpoint`, `roomHumidity` and `faultSignal`, each when enabled in the app. The commands are emitted only with **Feedback and commands**.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

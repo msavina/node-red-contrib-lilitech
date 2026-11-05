@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.0
+
+- New `thermostat` node: switch (when powerable), temperature (limited to the base setpoint ± 3 °C when the setpoint block is enabled, like the app), profile, mode on heat/cool thermostats and override restore; emits feedbacks, room temperature, thermo status, override, valves, chrono setpoint, humidity and fault.
+
 ## 0.18.0
 
 - New `system` node (read only): clock (`sunrise`, `sunset`, `night`, sunrise/sunset times, optionally the current day and time every minute) and weather (conditions, temperatures, humidity, pressure, wind, rain, UV, air pollution, alerts, optionally the daily and hourly forecast). Items are emitted only when they change, although the headunit resends them every minute.
