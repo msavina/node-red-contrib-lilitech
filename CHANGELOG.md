@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.21.3
+
+- New icon for the irrigation node (leaf).
+
+## 0.21.2
+
+- Scenario node editor like the device nodes: **Items** row (`command`, play only with the manual control) and **Output** option; with *Feedback and commands* the node also emits `topic: "command"` (play/stop sent by the app or by other nodes).
+
+## 0.21.1
+
+- Scenario node editor: new **Commands** row with the accepted commands (play only with the manual control enabled in the app).
+
+## 0.21.0
+
+- New `scenario` node (at the end of the palette, in a lighter orange): starts and stops a scenario (`play` / `stop` / `toggle`, like the app; play only with the manual control enabled) and emits its running state (`run` / `stop`) with the timestamps of the last execution (`msg.lastRun`, `msg.lastEnd`) and `msg.inhibited`, shown in yellow in the node status. Requires the headunit with the scenario list on the tube (`DATABASE_LIST_REQUEST_SCENARIOS`).
+
 ## 0.20.0
 
 - New `video surveillance` node (video cameras for now, monitors later): records a clip like the REC button of the app (with loop recording enabled, `msg.source` shown in the history) and emits `status`, `triggerRecording` and each uploaded clip (`topic: "clip"`, file name, trigger and source).

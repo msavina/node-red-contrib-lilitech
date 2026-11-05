@@ -78,5 +78,74 @@ window.LilitechEditor =
             }
         }
 
-        return { prepareDevicePicker, saveDevice };
+        /*--------------------------------------------------------------------------------------------------------------
+            Carica l'elenco degli scenari dalla headunit selezionata
+        --------------------------------------------------------------------------------------------------------------*/
+        function loadScenarios(node) {
+            const select = $('#node-input-scenarioId');
+            const headunitId = $('#node-input-headunit').val();
+            const headunit = RED.nodes.node(headunitId);
+            const current = select.val() || node.scenarioId;
+            const tip = $('#node-input-lilitech-tip');
+
+            if (!headunit) {
+                tip.text('Select or create a headunit first.');
+                return;
+            }
+            tip.text('Loading scenarios...');
+            $.getJSON('lilitech/scenarios', { config: headunitId, url: headunit.url })
+                .done(function (scenarios) {
+                    select.empty();
+                    scenarios
+                        .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+                        .forEach(function (s) {
+                            $('<option/>')
+                                .val(s.scenarioId)
+                                .text(`${s.name || s.scenarioId}${s.enable === false ? ' (disabled)' : ''}`)
+                                .data('scenario', s)
+                                .appendTo(select);
+                        });
+                    if (current && !scenarios.some((s) => s.scenarioId === current)) {
+                        $('<option/>').val(current).text(`${node.scenarioName || current} (not found)`).appendTo(select);
+                    }
+                    select.val(current || (scenarios[0] && scenarios[0].scenarioId)).trigger('change');
+                    tip.text(scenarios.length ? '' : 'No scenarios found on the headunit.');
+                })
+                .fail(function (xhr) {
+                    tip.text((xhr.responseJSON && xhr.responseJSON.error) || 'Unable to load the scenarios.');
+                    if (current && !select.find(`option[value="${current}"]`).length) {
+                        $('<option/>').val(current).text(node.scenarioName || current).appendTo(select);
+                        select.val(current);
+                    }
+                });
+        }
+
+        /*--------------------------------------------------------------------------------------------------------------
+            Da chiamare in oneditprepare dei nodi scenario
+        --------------------------------------------------------------------------------------------------------------*/
+        function prepareScenarioPicker(node) {
+            // Item accettato dal nodo: il play solo con il controllo manuale abilitato nell'app, come il tasto della card
+            $('#node-input-scenarioId').on('change', function () {
+                const s = $(this).find(':selected').data('scenario');
+                if (!s) return showItems(null);
+                const items = s.manualControl ? 'command (play, stop)' : 'command (stop only: play needs the manual control enabled in the app)';
+                $('#node-input-lilitech-items').text(s.enable === false ? `${items} · scenario disabled` : items);
+            });
+            $('#node-input-headunit').on('change', function () {
+                loadScenarios(node);
+            });
+            $('#node-input-lilitech-refresh').on('click', function () {
+                loadScenarios(node);
+            });
+        }
+
+        /*--------------------------------------------------------------------------------------------------------------
+            Da chiamare in oneditsave dei nodi scenario: salviamo il nome per l'etichetta del nodo
+        --------------------------------------------------------------------------------------------------------------*/
+        function saveScenario(node) {
+            const s = $('#node-input-scenarioId').find(':selected').data('scenario');
+            if (s) node.scenarioName = s.name;
+        }
+
+        return { prepareDevicePicker, saveDevice, prepareScenarioPicker, saveScenario };
     })();

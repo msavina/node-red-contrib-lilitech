@@ -51,4 +51,25 @@ async function startFakeDevices(url, devices) {
     };
 }
 
-module.exports = { startFakeTube, startFakeDevices };
+/*----------------------------------------------------------------------------------------------------------------------
+    core-scenarios finto: risponde all'elenco degli scenari e registra i comandi
+----------------------------------------------------------------------------------------------------------------------*/
+async function startFakeScenarios(url, scenarios) {
+    const socket = io(url, { transports: ['websocket'] });
+    const received = [];
+    const emit = (eventName, payload) => socket.emit(eventName, { origin: 'UNIT', className: 'ScenariosService', eventName, payload });
+
+    socket.on('DATABASE_LIST_REQUEST_SCENARIOS', (message) => {
+        emit('DATABASE_LIST_RESPONSE_SCENARIOS', { requestId: message.payload.requestId, scenarios });
+    });
+    socket.on('DATABASE_UPDATE_SCENARIO', (message) => received.push(message));
+    await new Promise((resolve) => socket.on('connect', resolve));
+
+    return {
+        received,
+        emitUpdate: (payload) => emit('DATABASE_UPDATE_SCENARIO', { unitId: 'unit-1', ...payload }),
+        close: () => socket.disconnect()
+    };
+}
+
+module.exports = { startFakeTube, startFakeDevices, startFakeScenarios };

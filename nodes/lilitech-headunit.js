@@ -16,6 +16,8 @@ module.exports = function (RED) {
         node.client = new TubeClient(node.url);
         // Famiglie usate dai nodi registrati, di cui chiediamo l'elenco ad ogni (ri)connessione
         node.families = new Map();
+        // Nodi scenario registrati: se ce n'è almeno uno chiediamo anche l'elenco degli scenari
+        node.scenarioNodes = 0;
 
         node.client.on('connected', () => {
             node.log(`Connected to headunit tube at ${node.url}`);
@@ -44,6 +46,7 @@ module.exports = function (RED) {
         --------------------------------------------------------------------------------------------------------------*/
         node.refreshFamilies = function () {
             for (const familyId of node.families.keys()) node.refreshFamily(familyId);
+            if (node.scenarioNodes > 0) node.refreshScenarios();
         };
 
         /*--------------------------------------------------------------------------------------------------------------
@@ -59,6 +62,35 @@ module.exports = function (RED) {
         node.write = function (familyId, deviceId, items, sender) {
             node.client.write(familyId, deviceId, items);
             node.client.emit('device-update', { familyId, deviceId, items, origin: 'NODE-RED', sender });
+        };
+
+        /*--------------------------------------------------------------------------------------------------------------
+        --------------------------------------------------------------------------------------------------------------*/
+        node.registerScenarios = function () {
+            node.scenarioNodes++;
+            if (node.client.connected) node.refreshScenarios();
+        };
+
+        /*--------------------------------------------------------------------------------------------------------------
+        --------------------------------------------------------------------------------------------------------------*/
+        node.unregisterScenarios = function () {
+            node.scenarioNodes = Math.max(0, node.scenarioNodes - 1);
+        };
+
+        /*--------------------------------------------------------------------------------------------------------------
+            La risposta arriva ai nodi come evento 'scenario-list' del client
+        --------------------------------------------------------------------------------------------------------------*/
+        node.refreshScenarios = function () {
+            node.client.listScenarios().catch((error) => node.warn(`Unable to load the scenarios: ${error.message}`));
+        };
+
+        /*--------------------------------------------------------------------------------------------------------------
+            Comando a uno scenario: lo notifichiamo in locale agli altri nodi dello stesso scenario (il tubo non rimanda
+            al mittente); lo stato (run/stop) arriva poi dalla headunit
+        --------------------------------------------------------------------------------------------------------------*/
+        node.writeScenario = function (scenarioId, fields, sender) {
+            node.client.writeScenario(scenarioId, fields);
+            node.client.emit('scenario-update', { scenarioId, fields, previous: {}, origin: 'NODE-RED', sender });
         };
 
         node.on('close', function (done) {
@@ -78,6 +110,27 @@ module.exports = function (RED) {
         const family = families[familyId];
         if (!family) return res.status(400).json({ error: `Unknown familyId "${familyId}"` });
 
+        await withEditorClient(req, res, async (client) => {
+            const devices = await client.listDevices(familyId);
+            return devices.map((d) => ({ deviceId: d.deviceId, name: d.name, typeId: d.typeId, roomId: d.roomId, items: family.editorItems(d) }));
+        });
+    });
+
+    /*------------------------------------------------------------------------------------------------------------------
+        Elenco degli scenari per l'editor
+    ------------------------------------------------------------------------------------------------------------------*/
+    RED.httpAdmin.get('/lilitech/scenarios', RED.auth.needsPermission('lilitech-headunit.read'), async function (req, res) {
+        await withEditorClient(req, res, async (client) => {
+            const scenarios = await client.listScenarios();
+            return scenarios.map((s) => ({ scenarioId: s.scenarioId, name: s.name, roomId: s.roomId, enable: s.enable, manualControl: !!s.manualControl }));
+        });
+    });
+
+    /*------------------------------------------------------------------------------------------------------------------
+        Risponde all'editor con il client del config node o, se non è ancora stato deployato, con una connessione
+        temporanea all'URL indicato
+    ------------------------------------------------------------------------------------------------------------------*/
+    async function withEditorClient(req, res, load) {
         const configNode = req.query.config ? RED.nodes.getNode(String(req.query.config)) : null;
         const url = String(req.query.url || DEFAULT_URL);
         if (!configNode && !/^https?:\/\//i.test(url)) return res.status(400).json({ error: 'Invalid url' });
@@ -96,12 +149,11 @@ module.exports = function (RED) {
                     client.connect();
                 });
             }
-            const devices = await client.listDevices(familyId);
-            res.json(devices.map((d) => ({ deviceId: d.deviceId, name: d.name, typeId: d.typeId, roomId: d.roomId, items: family.editorItems(d) })));
+            res.json(await load(client));
         } catch (error) {
             res.status(503).json({ error: error.message });
         } finally {
             tempClient?.close();
         }
-    });
+    }
 };

@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-lilitech",
-    "version": "0.20.0",
+    "version": "0.21.3",
     "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
     "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
     "license": "MIT",
@@ -58,7 +58,8 @@
         "video camera",
         "ip camera",
         "onvif",
-        "video surveillance"
+        "video surveillance",
+        "scenario"
     ],
     "repository": {
         "type": "git",
@@ -99,7 +100,8 @@
             "lilitech-socket": "nodes/lilitech-socket.js",
             "lilitech-system": "nodes/lilitech-system.js",
             "lilitech-thermostat": "nodes/lilitech-thermostat.js",
-            "lilitech-video-surveillance": "nodes/lilitech-video-surveillance.js"
+            "lilitech-video-surveillance": "nodes/lilitech-video-surveillance.js",
+            "lilitech-scenario": "nodes/lilitech-scenario.js"
         }
     },
     "engines": {

@@ -1,0 +1,122 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-scenario', {
+        category: 'Lilitech',
+        // Arancio sbiadito per distinguere gli scenari dai nodi device
+        color: '#F5B07F',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            scenarioId: { value: '', required: true },
+            scenarioName: { value: '' },
+            outputMode: { value: 'feedback' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-magic',
+        paletteLabel: 'scenario',
+        label: function () {
+            return this.name || this.scenarioName || 'scenario';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareScenarioPicker(this);
+        },
+        oneditsave: function () {
+            LilitechEditor.saveScenario(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-scenario">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-scenarioId"><i class="fa fa-magic"></i> Scenario</label>
+        <select id="node-input-scenarioId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload scenarios"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputMode" style="width: 70%">
+            <option value="feedback">Feedback only (actual state)</option>
+            <option value="all">Feedback and commands</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-scenario">
+    <p>Starts and stops a Lilitech scenario, like the play/stop button of the app, and emits its running state.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | boolean</span></dt>
+        <dd>
+            <code>"play"</code> / <code>"stop"</code> (also <code>true</code> / <code>false</code>, <code>"on"</code> / <code>"off"</code>) starts or
+            stops the scenario, <code>"toggle"</code> inverts its state. Like the play button of the app, a scenario can be started only with
+            the <i>manual control</i> enabled in the app and when it is enabled; otherwise the node reports an error. Starting a scenario that
+            is already running does nothing.
+        </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd><code>command</code>, or empty.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message each time the scenario starts or stops (and on deploy, if enabled).</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd><code>status</code>, or <code>command</code> with <i>Feedback and commands</i>.</dd>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>
+            <code>status</code>: <code>run</code> while the scenario is running, <code>stop</code> otherwise. <code>command</code>: <code>play</code>
+            or <code>stop</code> sent by the app or by other nodes.
+        </dd>
+        <dt>running <span class="property-type">boolean</span></dt>
+        <dd><code>true</code> while the scenario is running.</dd>
+        <dt>lastRun <span class="property-type">number</span></dt>
+        <dd>Timestamp (milliseconds since epoch) of the last execution start, or <code>null</code> if it never ran.</dd>
+        <dt>lastEnd <span class="property-type">number</span></dt>
+        <dd>Timestamp of the last execution end, or <code>null</code>.</dd>
+        <dt>enable <span class="property-type">boolean</span></dt>
+        <dd><code>false</code> when the scenario is disabled in the app.</dd>
+        <dt>inhibited <span class="property-type">boolean</span></dt>
+        <dd><code>true</code> when at least one condition of the scenario is not satisfied.</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another node of this
+            flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>scenario <span class="property-type">object</span></dt>
+        <dd><code>scenarioId</code>, <code>name</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>
+        With <i>Feedback only</i> the node emits only the running state confirmed by the headunit (<code>status</code>). With
+        <i>Feedback and commands</i> it also emits the <code>command</code> sent by the app or by other nodes.
+    </p>
+    <p>
+        The node status shows the state and the last execution, e.g. <i>Running · since 10:15</i> or <i>Stopped · Last run 05/11 10:15</i>,
+        in yellow with <i>· Inhibited</i> when the scenario is inhibited by its conditions. Triggers, conditions and actions are configured in
+        the app.
+    </p>
+</script>

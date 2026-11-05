@@ -387,6 +387,21 @@ A command received while a clip is being recorded is ignored by the headunit.
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`online` / `offline`) and, with loop recording, `triggerRecording` (`manual`, `auto` when started by an armed security sensor, `idle` when the clip is saved). When the headunit uploads a clip the node also emits `topic: "clip"` with the file name in `msg.payload`, `msg.trigger` (`manual` or `auto`) and `msg.source`. Live stream, recordings and PTZ stay in the app.
 
+### scenario
+
+Starts and stops a scenario, like the play/stop button of the app, and emits its running state. The node is at the end of the palette, in a lighter orange to tell it apart from the device nodes.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: "play"` / `"stop"` (`true` / `false`, `"on"` / `"off"`) | start / stop the scenario |
+| `payload: "toggle"` | start it if stopped, stop it if running |
+
+Like the play button of the app, a scenario can be started only with the *manual control* enabled in the app and when it is enabled; otherwise the node reports an error. Starting a scenario that is already running does nothing.
+
+**Output**: one message each time the scenario starts or stops (and on deploy), with `msg.topic: "status"`, `msg.payload` = `run` / `stop`, `msg.running`, `msg.lastRun` and `msg.lastEnd` (timestamps in milliseconds of the last execution start and end, `null` if it never ran), `msg.enable`, `msg.inhibited` (a condition of the scenario is not satisfied), `msg.origin` and `msg.scenario` (`scenarioId`, `name`, `roomId`). With **Feedback and commands** it also emits `topic: "command"` with the `play` / `stop` sent by the app or by other nodes. The node status shows e.g. *Running · since 10:15* or *Stopped · Last run 05/11 10:15*, in yellow with *· Inhibited* when the scenario is inhibited.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License
