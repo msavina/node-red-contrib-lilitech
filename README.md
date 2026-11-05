@@ -20,7 +20,6 @@ Or from the Node-RED user directory:
 ```sh
 npm install node-red-contrib-lilitech
 ```
-
 ## Nodes
 
 ### headunit (configuration)
@@ -407,3 +406,12 @@ Example flows are available in **Menu → Import → Examples → node-red-contr
 ## License
 
 MIT
+
+## Deploy
+Login:
+`npm login --auth-type=web`
+
+Publish:
+`npm publish`
+
+Click on: `https://flows.nodered.org/add/node` and add `node-red-contrib-lilitech`
