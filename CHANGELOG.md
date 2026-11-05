@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.20.0
+
+- New `video surveillance` node (video cameras for now, monitors later): records a clip like the REC button of the app (with loop recording enabled, `msg.source` shown in the history) and emits `status`, `triggerRecording` and each uploaded clip (`topic: "clip"`, file name, trigger and source).
+- Families receive the node configuration in `parseInput`.
+
 ## 0.19.0
 
 - New `thermostat` node: switch (when powerable), temperature (limited to the base setpoint ± 3 °C when the setpoint block is enabled, like the app), profile, mode on heat/cool thermostats and override restore; emits feedbacks, room temperature, thermo status, override, valves, chrono setpoint, humidity and fault.

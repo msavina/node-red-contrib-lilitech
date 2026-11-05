@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-lilitech",
-    "version": "0.19.0",
+    "version": "0.20.0",
     "description": "Node-RED nodes to control and monitor the devices of a Lilitech smart home headunit",
     "author": "Lilitech <developer@lilitech.com> (https://www.lilitech.com)",
     "license": "MIT",
@@ -54,7 +54,11 @@
         "weather",
         "openweather",
         "thermostat",
-        "chronothermostat"
+        "chronothermostat",
+        "video camera",
+        "ip camera",
+        "onvif",
+        "video surveillance"
     ],
     "repository": {
         "type": "git",
@@ -94,7 +98,8 @@
             "lilitech-security-sensor": "nodes/lilitech-security-sensor.js",
             "lilitech-socket": "nodes/lilitech-socket.js",
             "lilitech-system": "nodes/lilitech-system.js",
-            "lilitech-thermostat": "nodes/lilitech-thermostat.js"
+            "lilitech-thermostat": "nodes/lilitech-thermostat.js",
+            "lilitech-video-surveillance": "nodes/lilitech-video-surveillance.js"
         }
     },
     "engines": {

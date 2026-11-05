@@ -372,6 +372,21 @@ The headunit applies the temperature only while the thermostat is on. Changing t
 
 **Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.unit` (`°C`, `%`, `ms`), `msg.origin` and `msg.device`: `switchFeedback`, `setpointTemperatureFeedback`, `thermoProfileFeedback`, `thermoModeFeedback`, `roomTemperature`, `thermoStatus` (`off`, `idle`, `heat`, `cool`, `auto`, `dry`, `fan`, `inhibit`, `standby`), `overrideFeedback`, `overrideTime` (ms), `overrideTimeAt`, the valves (`systemPrimaryValve`, or `systemPrimaryValveHeat` / `systemPrimaryValveCool` on 4 pipes, and the same for the secondary system), `chronoSetpoint`, `roomHumidity` and `faultSignal`, each when enabled in the app. The commands are emitted only with **Feedback and commands**.
 
+### video surveillance
+
+Video cameras: records a clip, like the REC button of the app, and emits the camera state and the recorded clips. Monitors have no items yet: for now the node supports only video cameras.
+
+**Input**
+
+| msg | Effect |
+|---|---|
+| `payload: true` / `"manual"` | record a clip (only with *loop recording* enabled on the camera in the app; the clip stops by itself) |
+| `source: "Doorbell flow"` | who started it, shown in the app history (default: the node name, or `Node-RED`) |
+
+A command received while a clip is being recorded is ignored by the headunit.
+
+**Output**: one message per changed item, with `msg.topic` = item name, `msg.payload` = value, `msg.origin` and `msg.device`: `status` (`online` / `offline`) and, with loop recording, `triggerRecording` (`manual`, `auto` when started by an armed security sensor, `idle` when the clip is saved). When the headunit uploads a clip the node also emits `topic: "clip"` with the file name in `msg.payload`, `msg.trigger` (`manual` or `auto`) and `msg.source`. Live stream, recordings and PTZ stay in the app.
+
 Example flows are available in **Menu → Import → Examples → node-red-contrib-lilitech**.
 
 ## License

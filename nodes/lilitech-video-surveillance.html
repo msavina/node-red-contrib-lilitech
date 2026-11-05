@@ -1,0 +1,113 @@
+<script type="text/javascript" src="resources/node-red-contrib-lilitech/lilitech-editor.js"></script>
+<script type="text/javascript">
+    RED.nodes.registerType('lilitech-video-surveillance', {
+        category: 'Lilitech',
+        color: '#F15A00',
+        defaults: {
+            name: { value: '' },
+            headunit: { value: '', type: 'lilitech-headunit', required: true },
+            deviceId: { value: '', required: true },
+            deviceName: { value: '' },
+            typeId: { value: '' },
+            initialState: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-video-camera',
+        paletteLabel: 'video surveillance',
+        label: function () {
+            return this.name || this.deviceName || 'video surveillance';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            LilitechEditor.prepareDevicePicker(this, 'video-surveillances');
+        },
+        oneditsave: function () {
+            LilitechEditor.saveDevice(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lilitech-video-surveillance">
+    <div class="form-row">
+        <label for="node-input-headunit"><i class="fa fa-server"></i> Headunit</label>
+        <input type="text" id="node-input-headunit" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceId"><i class="fa fa-video-camera"></i> Device</label>
+        <select id="node-input-deviceId" style="width: 60%"></select>
+        <button type="button" id="node-input-lilitech-refresh" class="red-ui-button" title="Reload video surveillance devices"><i class="fa fa-refresh"></i></button>
+    </div>
+    <div class="form-row">
+        <label>Items</label>
+        <span id="node-input-lilitech-items">-</span>
+    </div>
+    <div class="form-row">
+        <label for="node-input-initialState">&nbsp;</label>
+        <input type="checkbox" id="node-input-initialState" style="display: inline-block; width: auto; vertical-align: top" />
+        <label for="node-input-initialState" style="width: 70%">Send the current state on deploy/reconnect</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-tips" id="node-input-lilitech-tip"></div>
+</script>
+
+<script type="text/html" data-help-name="lilitech-video-surveillance">
+    <p>
+        Controls a Lilitech video surveillance device. Video cameras: records a clip, like the REC button of the app, and emits the state of the camera and the clips
+        recorded by the headunit.
+    </p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean | string</span></dt>
+        <dd>
+            <code>true</code> or <code>"manual"</code> records a clip. It works only with the <i>loop recording</i> enabled on the camera in
+            the app; the clip stops by itself, and a command received while a clip is being recorded is ignored by the headunit.
+        </dd>
+        <dt class="optional">source <span class="property-type">string</span></dt>
+        <dd>Who started the recording, shown in the app history (default: the node name, or <code>Node-RED</code>).</dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd><code>triggerRecording</code>, or empty.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>One message for each item that changes, and one for each recorded clip.</p>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd><code>status</code>, <code>triggerRecording</code> or <code>clip</code>.</dd>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd>
+            <ul>
+                <li><code>status</code>: <code>online</code> or <code>offline</code>.</li>
+                <li>
+                    <code>triggerRecording</code>: <code>manual</code> (clip started by a user, a scenario or Node-RED), <code>auto</code> (started by
+                    an armed security sensor linked to the camera) or <code>idle</code> (clip saved, ready for the next one). Only with the loop
+                    recording enabled.
+                </li>
+                <li><code>clip</code>: name of the clip file uploaded by the headunit, as listed in the recordings of the app.</li>
+            </ul>
+        </dd>
+        <dt class="optional">trigger <span class="property-type">string</span></dt>
+        <dd>On <code>clip</code>: <code>manual</code> (recording) or <code>auto</code> (video verification of an alarm).</dd>
+        <dt class="optional">source <span class="property-type">string</span></dt>
+        <dd>On <code>clip</code>: who started it (user, sensor or scenario name).</dd>
+        <dt>origin <span class="property-type">string</span></dt>
+        <dd>
+            Who produced the change: <code>UNIT</code> (headunit/drivers), <code>APP</code> (Lilitech app), <code>NODE-RED</code> (another
+            node of this flow) or <code>INITIAL</code> (state sent on deploy).
+        </dd>
+        <dt>device <span class="property-type">object</span></dt>
+        <dd><code>deviceId</code>, <code>name</code>, <code>typeId</code>, <code>roomId</code>.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>
+        The live stream, the recordings and the PTZ commands stay in the app. Monitors have no items yet: for now the node supports only video cameras. The camera must be
+        configured with the ONVIF technology.
+    </p>
+</script>

@@ -1,0 +1,57 @@
+[
+    {
+        "id": "f8a0d0000000001",
+        "type": "comment",
+        "z": "",
+        "name": "Open the video surveillance node and select your camera",
+        "info": "The inject node records a clip like the REC button of the app (the loop recording must be enabled on the camera); the debug node shows the camera state and the clips uploaded by the headunit, with who started them.",
+        "x": 250,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "f8a0d0000000002",
+        "type": "inject",
+        "z": "",
+        "name": "record a clip",
+        "props": [{ "p": "payload" }, { "p": "source", "v": "Node-RED flow", "vt": "str" }],
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 140,
+        "wires": [["f8a0d0000000003"]]
+    },
+    {
+        "id": "f8a0d0000000003",
+        "type": "lilitech-video-surveillance",
+        "z": "",
+        "name": "",
+        "headunit": "f8a0d0000000005",
+        "deviceId": "",
+        "deviceName": "",
+        "typeId": "",
+        "initialState": true,
+        "x": 340,
+        "y": 140,
+        "wires": [["f8a0d0000000004"]]
+    },
+    {
+        "id": "f8a0d0000000004",
+        "type": "debug",
+        "z": "",
+        "name": "camera state and clips",
+        "active": true,
+        "tosidebar": true,
+        "complete": "true",
+        "targetType": "full",
+        "x": 570,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f8a0d0000000005",
+        "type": "lilitech-headunit",
+        "name": "Headunit",
+        "url": "http://127.0.0.1:3000"
+    }
+]
