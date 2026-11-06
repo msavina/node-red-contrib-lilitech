@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- First stable release.
+
 ## 0.21.3
 
 - New icon for the irrigation node (leaf).
